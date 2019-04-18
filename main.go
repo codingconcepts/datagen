@@ -60,14 +60,17 @@ func main() {
 	rand.Seed(time.Now().UnixNano())
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
+	driver := flag.String("driver", "", "name of the database driver to use [postgres|mysql]")
 	script := flag.String("script", "", "the full or relative path to your script file")
+	conn := flag.String("conn", "", "the database connection string")
 	flag.Parse()
 
-	if *script == "" {
+	if *script == "" || *driver == "" || *conn == "" {
 		flag.Usage()
+		os.Exit(2)
 	}
 
-	db := mustConnect("postgres://root@localhost:26257/sandbox?sslmode=disable")
+	db := mustConnect(*driver, *conn)
 
 	file, err := os.Open(*script)
 	if err != nil {
@@ -276,8 +279,8 @@ func between64(min, max int64) int64 {
 	return rand.Int63n(max-min) + min
 }
 
-func mustConnect(connStr string) *sql.DB {
-	conn, err := sql.Open("postgres", connStr)
+func mustConnect(driver, connStr string) *sql.DB {
+	conn, err := sql.Open(driver, connStr)
 	if err != nil {
 		log.Fatalf("error opening connection: %d", err)
 	}
