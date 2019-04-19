@@ -1,20 +1,18 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"database/sql"
 	"flag"
-	"io"
 	"log"
 	"math/rand"
 	"os"
 	"reflect"
-	"strconv"
 	"strings"
 	"text/template"
 	"time"
 
+	"github.com/codingconcepts/dbgen/internal/pkg/parse"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 )
@@ -45,10 +43,6 @@ var (
 )
 
 const (
-	commentEOF    = "-- EOF"
-	commentRepeat = "-- REPEAT"
-	commentName   = "-- NAME"
-
 	dateFormat = "2006-01-02 15:04:05Z07:00"
 )
 
@@ -78,13 +72,13 @@ func main() {
 	}
 	defer file.Close()
 
-	blocks, err := blocks(file)
+	blocks, err := parse.Blocks(file)
 	if err != nil {
 		log.Fatalf("error reading blocks from script file: %v", err)
 	}
 
 	for _, block := range blocks {
-		for i := 0; i < block.repeat; i++ {
+		for i := 0; i < block.Repeat; i++ {
 			if err = run(db, block); err != nil {
 				log.Fatalf("error running block: %v", err)
 			}
@@ -92,8 +86,8 @@ func main() {
 	}
 }
 
-func run(db *sql.DB, b block) error {
-	personTmpl := template.Must(template.New("block").Funcs(funcs).Parse(b.stmt))
+func run(db *sql.DB, b parse.Block) error {
+	personTmpl := template.Must(template.New("block").Funcs(funcs).Parse(b.Body))
 
 	buf := &bytes.Buffer{}
 	if err := personTmpl.Execute(buf, helperArgs); err != nil {
@@ -131,73 +125,6 @@ func run(db *sql.DB, b block) error {
 		}
 	}
 	return nil
-}
-
-type block struct {
-	repeat int
-	name   string
-	stmt   string
-}
-
-func blocks(r io.Reader) ([]block, error) {
-	var err error
-	scanner := bufio.NewScanner(r)
-
-	b := newErrBuilder()
-	output := []block{}
-	current := block{}
-	for scanner.Scan() {
-		t := scanner.Text()
-
-		// Parse the repeat comment that defines how many times a
-		// statement will be executed.
-		if strings.HasPrefix(t, commentRepeat) {
-			if current.repeat, err = parseRepeat(t); err != nil {
-				return nil, errors.Wrap(err, "parsing repeat comment")
-			}
-			continue
-		}
-
-		// Parse the name comment that defines the name of the
-		// statement (useful if you're consuming the output from
-		// multiple statements).
-		if strings.HasPrefix(t, commentName) {
-			current.name = parseName(t)
-			continue
-		}
-
-		// We've hit the gap between statements, add this block to
-		// the output slice and reset.
-		if t == "" {
-			current.stmt = b.string()
-			output = append(output, current)
-			b.reset()
-		}
-		b.writeString(t)
-
-		// If the user has specified an end-of-file, break out.
-		if t == commentEOF {
-			break
-		}
-	}
-
-	if b.err != nil {
-		return nil, b.err
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return output, nil
-}
-
-func parseRepeat(input string) (int, error) {
-	clean := strings.Trim(strings.TrimPrefix(input, commentRepeat), " ")
-	return strconv.Atoi(clean)
-}
-
-func parseName(input string) string {
-	return strings.Trim(strings.TrimPrefix(input, commentRepeat), " ")
 }
 
 func randomString(min, max int, prefix string) string {
@@ -290,33 +217,4 @@ func mustConnect(driver, connStr string) *sql.DB {
 	}
 
 	return conn
-}
-
-type errBuilder struct {
-	b   strings.Builder
-	err error
-}
-
-func newErrBuilder() *errBuilder {
-	return &errBuilder{b: strings.Builder{}}
-}
-
-func (b *errBuilder) writeString(ss ...string) {
-	if b.err != nil {
-		return
-	}
-
-	for _, s := range ss {
-		if _, b.err = b.b.WriteString(s); b.err != nil {
-			return
-		}
-	}
-}
-
-func (b *errBuilder) string() string {
-	return b.b.String()
-}
-
-func (b *errBuilder) reset() {
-	b.b.Reset()
 }
