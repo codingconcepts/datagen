@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/codingconcepts/datagen/internal/pkg/builder"
+	"github.com/pkg/errors"
 )
 
 const (
@@ -38,10 +39,9 @@ func Blocks(r io.Reader) ([]Block, error) {
 	// Function to call whenever we've hit the gap between statements
 	// or have reach the end of the file (either through manual EOF,
 	// or the actual EOF).
-	addAndReset := func() {
-		s := b.String()
-		if s != "" {
-			current.Body = b.String()
+	addAndReset := func(body string) {
+		if body != "" {
+			current.Body = body
 			output = append(output, current)
 		}
 		b.Reset()
@@ -52,7 +52,10 @@ func Blocks(r io.Reader) ([]Block, error) {
 		t := strings.Trim(scanner.Text(), " \t")
 
 		if strings.HasPrefix(t, commentRepeat) {
-			current.Repeat = parseRepeat(t)
+			var err error
+			if current.Repeat, err = parseRepeat(t); err != nil {
+				return nil, errors.Wrap(err, "parsing repeat")
+			}
 			continue
 		}
 
@@ -63,18 +66,19 @@ func Blocks(r io.Reader) ([]Block, error) {
 
 		// We've hit the gap between statements, add this block to
 		// the output slice and reset.
-		if t == "" || strings.HasPrefix(t, commentEOF) {
-			addAndReset()
+		if t == "" {
+			addAndReset(b.String())
 			continue
 		}
-		b.WriteStrings(t)
 
-		// If the user has specified an end-of-file, break out.
-		if t == commentEOF {
+		// We've hit the end of the file.
+		if strings.HasPrefix(t, commentEOF) {
+			addAndReset(b.String())
 			break
 		}
+		b.WriteStrings(t)
 	}
-	addAndReset()
+	addAndReset(b.String())
 
 	if err := b.Error(); err != nil {
 		return nil, err
@@ -86,13 +90,9 @@ func Blocks(r io.Reader) ([]Block, error) {
 	return output, nil
 }
 
-func parseRepeat(input string) int {
+func parseRepeat(input string) (int, error) {
 	clean := strings.Trim(strings.TrimPrefix(input, commentRepeat), " \t")
-	i, err := strconv.Atoi(clean)
-	if err != nil {
-		return 1
-	}
-	return i
+	return strconv.Atoi(clean)
 }
 
 func parseName(input string) string {
