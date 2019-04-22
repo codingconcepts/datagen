@@ -12,7 +12,7 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/codingconcepts/dbgen/internal/pkg/parse"
+	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	_ "github.com/lib/pq"
 	"github.com/pkg/errors"
 )

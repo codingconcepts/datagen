@@ -6,8 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codingconcepts/dbgen/internal/pkg/builder"
-	"github.com/pkg/errors"
+	"github.com/codingconcepts/datagen/internal/pkg/builder"
 )
 
 const (
@@ -30,19 +29,30 @@ type Block struct {
 }
 
 func Blocks(r io.Reader) ([]Block, error) {
-	var err error
 	scanner := bufio.NewScanner(r)
 
 	b := builder.NewErrBuilder()
 	output := []Block{}
-	current := Block{}
+	current := Block{Repeat: 1}
+
+	// Function to call whenever we've hit the gap between statements
+	// or have reach the end of the file (either through manual EOF,
+	// or the actual EOF).
+	addAndReset := func() {
+		s := b.String()
+		if s != "" {
+			current.Body = b.String()
+			output = append(output, current)
+		}
+		b.Reset()
+		current = Block{Repeat: 1}
+	}
+
 	for scanner.Scan() {
-		t := scanner.Text()
+		t := strings.Trim(scanner.Text(), " \t")
 
 		if strings.HasPrefix(t, commentRepeat) {
-			if current.Repeat, err = parseRepeat(t); err != nil {
-				return nil, errors.Wrap(err, "parsing repeat comment")
-			}
+			current.Repeat = parseRepeat(t)
 			continue
 		}
 
@@ -53,10 +63,9 @@ func Blocks(r io.Reader) ([]Block, error) {
 
 		// We've hit the gap between statements, add this block to
 		// the output slice and reset.
-		if t == "" {
-			current.Body = b.String()
-			output = append(output, current)
-			b.Reset()
+		if t == "" || strings.HasPrefix(t, commentEOF) {
+			addAndReset()
+			continue
 		}
 		b.WriteStrings(t)
 
@@ -65,6 +74,7 @@ func Blocks(r io.Reader) ([]Block, error) {
 			break
 		}
 	}
+	addAndReset()
 
 	if err := b.Error(); err != nil {
 		return nil, err
@@ -76,11 +86,15 @@ func Blocks(r io.Reader) ([]Block, error) {
 	return output, nil
 }
 
-func parseRepeat(input string) (int, error) {
-	clean := strings.Trim(strings.TrimPrefix(input, commentRepeat), " ")
-	return strconv.Atoi(clean)
+func parseRepeat(input string) int {
+	clean := strings.Trim(strings.TrimPrefix(input, commentRepeat), " \t")
+	i, err := strconv.Atoi(clean)
+	if err != nil {
+		return 1
+	}
+	return i
 }
 
 func parseName(input string) string {
-	return strings.Trim(strings.TrimPrefix(input, commentRepeat), " ")
+	return strings.Trim(strings.TrimPrefix(input, commentName), " \t")
 }

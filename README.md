@@ -1,4 +1,4 @@
-# dbgen
+# datagen
 A quick and dirty data generator for databases.
 
 ## Todos
