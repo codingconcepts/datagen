@@ -6,7 +6,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/codingconcepts/datagen/internal/pkg/builder"
 	"github.com/pkg/errors"
 )
 
@@ -32,7 +31,7 @@ type Block struct {
 func Blocks(r io.Reader) ([]Block, error) {
 	scanner := bufio.NewScanner(r)
 
-	b := builder.NewErrBuilder()
+	b := strings.Builder{}
 	output := []Block{}
 	current := Block{Repeat: 1}
 
@@ -76,18 +75,12 @@ func Blocks(r io.Reader) ([]Block, error) {
 			addAndReset(b.String())
 			break
 		}
-		b.WriteStrings(t)
+		b.WriteString(t)
 	}
 	addAndReset(b.String())
 
-	if err := b.Error(); err != nil {
-		return nil, err
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return output, nil
+	err := scanner.Err()
+	return output, err
 }
 
 func parseRepeat(input string) (int, error) {

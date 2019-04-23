@@ -9,6 +9,8 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/google/uuid"
+
 	"github.com/codingconcepts/datagen/internal/pkg/random"
 
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
@@ -34,6 +36,8 @@ func New(db *sql.DB) *runner {
 		"d":    random.Date,
 		"f32":  random.Float32,
 		"f64":  random.Float64,
+		"uuid": func() string { return uuid.New().String() },
+		"set":  random.Set,
 		"ref":  r.reference,
 		"join": strings.Join,
 		"times": func(i int) []struct{} {
@@ -89,7 +93,12 @@ func (r *runner) Run(b parse.Block) error {
 
 		for i, ct := range columnTypes {
 			values[i] = reflect.ValueOf(values[i]).Elem()
-			r.context[ct.Name()] = append(r.context[ct.Name()], values[i])
+
+			key := ct.Name()
+			if b.Name != "" {
+				key = b.Name + "_" + key
+			}
+			r.context[key] = append(r.context[key], values[i])
 		}
 	}
 	return nil
