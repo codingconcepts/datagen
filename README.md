@@ -13,6 +13,66 @@ datagen accepts a configuration file that can execute any number of SQL queries.
 
 It comes with the following functions to make generating data easy.  If there's a missing generator, please raise an issue or a PR:
 
+## Working example
+
+### Script
+
+The following script defines two "blocks":
+
+* One that inserts 10,000 people into the `person` table by executing the first block 10 times (as specified by the `-- REPEAT 10` comment)
+* One that inserts 1,000 pets into the `pet` table, referencing IDs of the people previously inserted.
+
+``` sql
+-- REPEAT 10
+-- NAME person
+insert into "person" ("s", "i", "d", "f32", "f64") values
+{{range $i, $e := $.times_1000 }}
+	{{if $i}},{{end}}
+	(
+		'{{s 10 10 "p-"}}',
+		{{i 1 100}},
+		'{{d "2018-01-02" "2019-01-02" "2006-01-02" }}',
+		{{f32 1 10}},
+		{{f64 1 100}}
+	)
+{{end}}
+returning "id";
+
+-- REPEAT 10
+-- NAME pet
+insert into "pet" ("pid", "name") values
+{{range $i, $e := .times_100 }}
+	{{if $i}},{{end}}
+	(
+		'{{ref "person_id"}}',
+		'{{s 10 10 "a-"}}'
+	)
+{{end}};
+
+-- EOF
+
+```
+
+### Execute
+
+```
+go run main.go -script input.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
+```
+
+#### Comments
+
+`-- REPEAT N`
+
+Repeat the block that directly follows the comment N times.
+
+`-- NAME`
+
+Assigns a given name to the block that directly follows the comment, allowing specific IDs from blocks to be used and not muddled with others.
+
+`-- EOF`
+
+Causing block parsing to stop, essentially simulating the natural end-of-file.
+
 #### Custom functions
 
 ##### s
@@ -99,7 +159,7 @@ Selects a random string from a set of possible options.
 
 ##### ref
 
-References a random value from a previous block's returned values.  For example, if you have two blocks, one named "person" and another named "pet" and you insert a number of people into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "person" for the first block's `-- NAME` comment):
+References a random value from a previous block's returned values (cached in memory).  For example, if you have two blocks, one named "person" and another named "pet" and you insert a number of people into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "person" for the first block's `-- NAME` comment):
 
 ```
 '{{ref "person_id"}}',
