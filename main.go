@@ -52,10 +52,6 @@ func main() {
 	}
 }
 
-
-
-
-
 func mustConnect(driver, connStr string) *sql.DB {
 	conn, err := sql.Open(driver, connStr)
 	if err != nil {
