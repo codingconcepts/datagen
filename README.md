@@ -80,7 +80,7 @@ insert into "pet" ("pid", "name") values
 ### Execute
 
 ```
-go run main.go -script input.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
+datagen -script input.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
 ```
 
 #### Comments
@@ -249,7 +249,7 @@ insert into `pet` (`pid`, `name`) values
 ### Execute
 
 ```
-go run main.go -script mysql.sql --driver mysql --conn root@/sandbox
+datagen -script mysql.sql --driver mysql --conn root@/sandbox
 ```
 
 ## Todos
