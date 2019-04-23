@@ -123,8 +123,8 @@ Generates a random 64 bit integer between a minimum and maximum value.
 ```
 
 `i` the name of the function<br/>
-`5` the smallest possible number<br/>
-`10` the largest possible number<br/>
+`5` the minimum number to generate<br/>
+`10` the maximum number to generate<br/>
 
 ##### d
 
@@ -135,8 +135,8 @@ Generates a random date between two dates.  Optionally takes a date format to us
 ```
 
 `d` the name of the function<br/>
-`"2018-01-02"` the earliest possible date<br/>
-`"2019-01-02"` the latest possible date<br/>
+`"2018-01-02"` the minimum date to generate<br/>
+`"2019-01-02"` the maximum date to generate<br/>
 `"2006-01-02"` the date format to use for parsing the min and max dates and also the date that will be sent to the database (uses Go's `time.Time` formatting rules).  If not provided, this will default to `time.RFC3339` for min, max and output.<br/>
 
 ##### f
@@ -148,8 +148,8 @@ Generates a random 64 bit float between a minimum and maximum value.
 ```
 
 `f` the name of the function<br/>
-`1.2345678901` the smallest possible number<br/>
-`2.3456789012` the largest possible number<br/>
+`1.2345678901` the minimum number to generate<br/>
+`2.3456789012` the maximum number to generate<br/>
 
 ##### uuid
 
@@ -166,12 +166,11 @@ Generates a random V4 UUID using Google's [uuid](github.com/google/uuid) package
 Selects a random string from a set of possible options.
 
 ```
-'{{set "alice" "bob"}}'
+'{{set "alice" "bob" "carol"}}'
 ```
 
 `set` the name of the function<br/>
-`"alice"` the first possible option<br/>
-`"bob"` the second possible option<br/>
+`"alice"`|`"bob"` etc. the available options to generate from.<br/>
 
 ##### ref
 
