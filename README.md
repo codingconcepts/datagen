@@ -67,7 +67,7 @@ Repeat the block that directly follows the comment N times.  If this comment isn
 
 `-- NAME`
 
-Assigns a given name to the block that directly follows the comment, allowing specific IDs from blocks to be used and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise.  Only omit this for single-blocked configurations.
+Assigns a given name to the block that directly follows the comment, allowing specific IDs from blocks to be used and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise.  Only omit this for single-block configurations.
 
 `-- EOF`
 
