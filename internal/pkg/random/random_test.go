@@ -1,7 +1,6 @@
 package random
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -12,8 +11,8 @@ import (
 func TestString(t *testing.T) {
 	cases := []struct {
 		name   string
-		min    int
-		max    int
+		min    int64
+		max    int64
 		prefix string
 	}{
 		{name: "length 1 without prefix", min: 1, max: 1, prefix: ""},
@@ -27,9 +26,8 @@ func TestString(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			s := String(c.min, c.max, c.prefix)
-			fmt.Printf("%q, %d, %d, %q\n", s, c.min, c.max, c.prefix)
-			test.Assert(t, len(s) >= c.min)
-			test.Assert(t, len(s) <= c.max)
+			test.Assert(t, int64(len(s)) >= c.min)
+			test.Assert(t, int64(len(s)) <= c.max)
 
 			if c.prefix != "" {
 				test.Assert(t, strings.HasPrefix(s, c.prefix))
@@ -41,8 +39,8 @@ func TestString(t *testing.T) {
 func TestInt(t *testing.T) {
 	cases := []struct {
 		name string
-		min  int
-		max  int
+		min  int64
+		max  int64
 	}{
 		{name: "min eq max", min: 1, max: 1},
 		{name: "min lt max", min: 1, max: 10},
@@ -104,26 +102,7 @@ func TestDate(t *testing.T) {
 	}
 }
 
-func TestFloat32(t *testing.T) {
-	cases := []struct {
-		name string
-		min  float32
-		max  float32
-	}{
-		{name: "min eq max", min: 1, max: 1},
-		{name: "min lt max", min: 1, max: 10},
-	}
-
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			i := Float32(c.min, c.max)
-			test.Assert(t, i >= c.min)
-			test.Assert(t, i <= c.max)
-		})
-	}
-}
-
-func TestFloat64(t *testing.T) {
+func TestFloat(t *testing.T) {
 	cases := []struct {
 		name string
 		min  float64
@@ -135,7 +114,7 @@ func TestFloat64(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			i := Float64(c.min, c.max)
+			i := Float(c.min, c.max)
 			test.Assert(t, i >= c.min)
 			test.Assert(t, i <= c.max)
 		})

@@ -15,29 +15,29 @@ const (
 )
 
 // String returns a random string between two lengths.
-func String(min, max int, prefix string) string {
-	if len(prefix) >= max {
+func String(min, max int64, prefix string) string {
+	if int64(len(prefix)) >= max {
 		return prefix
 	}
 
-	var length int
+	var length int64
 	if min >= max {
 		length = min
 	} else {
-		length = between(min, max) - len(prefix)
+		length = between64(min, max) - int64(len(prefix))
 	}
 
 	output := []rune{}
-	for i := 0; i < length-len(prefix); i++ {
+	for i := 0; i < int(length-int64(len(prefix))); i++ {
 		output = append(output, ascii[rand.Intn(len(ascii))])
 	}
 
 	return prefix + string(output)
 }
 
-// Int returns a random integer between a minimum and maximum.
-func Int(min, max int) int {
-	return between(min, max)
+// Int returns a random 64 integer between a minimum and maximum.
+func Int(min, max int64) int64 {
+	return between64(min, max)
 }
 
 // Date returns a random date between two dates in format provided
@@ -71,30 +71,15 @@ func Date(minStr, maxStr, format string) string {
 	return time.Unix(diff, 0).UTC().Format(format)
 }
 
-// Float32 returns a random float between a minimum and maximum.
-func Float32(min, max float32) float32 {
-	return min + rand.Float32()*(max-min)
-}
-
-// Float64 returns a random float between a minimum and maximum.
-func Float64(min, max float64) float64 {
+// Float returns a random 64 bit float between a minimum and maximum.
+func Float(min, max float64) float64 {
 	return min + rand.Float64()*(max-min)
 }
 
 // Set returns a random item from a set
 func Set(set ...string) string {
-	i := between(0, len(set))
+	i := between64(0, int64(len(set)))
 	return set[i]
-}
-
-func between(min, max int) int {
-	if min == max {
-		return min
-	}
-	if min > max {
-		min, max = max, min
-	}
-	return rand.Intn(max-min) + min
 }
 
 func between64(min, max int64) int64 {

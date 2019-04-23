@@ -116,7 +116,7 @@ Note that the apostrophes will wrap the string, turning it into a database strin
 
 ##### i
 
-Generates a random integer (32 or 64 bit dependent on architecture) between a minimum and maximum value.
+Generates a random 64 bit integer between a minimum and maximum value.
 
 ```
 {{i 5 10}}
@@ -139,23 +139,15 @@ Generates a random date between two dates.  Optionally takes a date format to us
 `"2019-01-02"` the latest possible date<br/>
 `"2006-01-02"` the date format to use for parsing the min and max dates and also the date that will be sent to the database (uses Go's `time.Time` formatting rules).  If not provided, this will default to `time.RFC3339` for min, max and output.<br/>
 
-##### f32
+##### f
+
+Generates a random 64 bit float between a minimum and maximum value. 
 
 ```
-{{f32 1.23 2.34}}
+{{f 1.2345678901 2.3456789012}}
 ```
 
-`f32` the name of the function<br/>
-`1.23` the smallest possible number<br/>
-`2.34` the largest possible number<br/>
-
-##### f64
-
-```
-{{f64 1.2345678901 2.3456789012}}
-```
-
-`f64` the name of the function<br/>
+`f` the name of the function<br/>
 `1.2345678901` the smallest possible number<br/>
 `2.3456789012` the largest possible number<br/>
 
