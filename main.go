@@ -29,6 +29,7 @@ func main() {
 	}
 
 	db := mustConnect(*driver, *conn)
+	defer db.Close()
 
 	runner := runner.New(db)
 
