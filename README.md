@@ -15,6 +15,33 @@ It comes with the following functions to make generating data easy.  If there's 
 
 ## Working example
 
+### Setup
+
+The following example assumes a database called `sandbox` is running in CockroachDB.
+
+Create a table called "person" that defines someone who can have zero or many pets.
+
+``` sql
+CREATE TABLE person (
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    name STRING NOT NULL,
+    date_of_birth TIMESTAMP NOT NULL,
+    CONSTRAINT "primary" PRIMARY KEY (id ASC)
+)
+```
+
+Create a table called "pet" that defines a pet that can belong to a person.
+
+``` sql
+CREATE TABLE pet (
+    pid UUID NOT NULL,
+    id UUID NOT NULL DEFAULT gen_random_uuid(),
+    name STRING NOT NULL,
+    CONSTRAINT "primary" PRIMARY KEY (pid ASC, id ASC),
+    CONSTRAINT fk_pid_ref_person FOREIGN KEY (pid) REFERENCES person (id)
+) INTERLEAVE IN PARENT person (pid)
+```
+
 ### Script
 
 The following script defines two "blocks":
@@ -25,15 +52,12 @@ The following script defines two "blocks":
 ``` sql
 -- REPEAT 10
 -- NAME person
-insert into "person" ("s", "i", "d", "f32", "f64") values
+insert into "person" ("name", "date_of_birth") values
 {{range $i, $e := $.times_1000 }}
 	{{if $i}},{{end}}
 	(
 		'{{s 10 10 "p-"}}',
-		{{i 1 100}},
-		'{{d "2018-01-02" "2019-01-02" "2006-01-02" }}',
-		{{f32 1 10}},
-		{{f64 1 100}}
+		'{{d "2018-01-02" "2019-01-02" "2006-01-02" }}'
 	)
 {{end}}
 returning "id";
