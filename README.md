@@ -193,54 +193,14 @@ References a random value from a previous block's returned values (cached in mem
 
 #### Helper functions
 
-##### times_1
+##### times_*
 
-Time functions can be used to generate multi-line DML.
-
-Execute something once.
+Time functions can be used to generate multi-line DML.  The number after the underscore denotes the number of times something will be repeated.  Possible numbers are 1, 10, 100, 1000, 10000, and 100000.
 
 ```
 {{range $i, $e := $.times_1}}
-```
-
-##### times_10
-
-Execute something 10 times.
-
-```
-{{range $i, $e := $.times_10}}
-```
-
-##### times_100
-
-Execute something 100 times.
-
-```
-{{range $i, $e := $.times_100}}
-```
-
-##### times_1000
-
-Execute something 1,000 times.
-
-```
-{{range $i, $e := $.times_1000}}
-```
-
-##### times_10000
-
-Execute something 10,000 times.
-
-```
-{{range $i, $e := $.times_10000}}
-```
-
-##### times_100000
-
-Execute something 100,000 times.
-
-```
-{{range $i, $e := $.times_100000}}
+	...something
+{{end}}
 ```
 
 ## Todos
