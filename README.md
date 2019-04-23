@@ -63,15 +63,15 @@ go run main.go -script input.sql --driver postgres --conn postgres://root@localh
 
 `-- REPEAT N`
 
-Repeat the block that directly follows the comment N times.
+Repeat the block that directly follows the comment N times.  If this comment isn't provided, a block will be executed once.
 
 `-- NAME`
 
-Assigns a given name to the block that directly follows the comment, allowing specific IDs from blocks to be used and not muddled with others.
+Assigns a given name to the block that directly follows the comment, allowing specific IDs from blocks to be used and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise.  Only omit this for single-blocked configurations.
 
 `-- EOF`
 
-Causing block parsing to stop, essentially simulating the natural end-of-file.
+Causing block parsing to stop, essentially simulating the natural end-of-file.  If this comment isn't provided, the parse will parse all blocks in the script.
 
 #### Custom functions
 
@@ -173,7 +173,7 @@ References a random value from a previous block's returned values (cached in mem
 
 Time functions can be used to generate multi-line DML.
 
-Execute something 1 time.
+Execute something once.
 
 ```
 {{range $i, $e := $.times_1}}
