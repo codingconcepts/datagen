@@ -1,14 +1,11 @@
 -- REPEAT 10
 -- NAME person
-insert into "person" ("s", "i", "d", "f32", "f64") values
+insert into "person" ("name", "date_of_birth") values
 {{range $i, $e := $.times_100 }}
 	{{if $i}},{{end}}
 	(
 		'{{s 10 10 "p-"}}',
-		{{i 1 100}},
-		'{{d "2018-01-02" "2019-01-02" "2006-01-02" }}',
-		{{f32 1 10}},
-		{{f64 1 100}}
+		'{{d "1900-01-01" "2019-04-23" "2006-01-02" }}'
 	)
 {{end}}
 returning "id";

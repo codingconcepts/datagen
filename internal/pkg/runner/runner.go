@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"reflect"
-	"strings"
 	"text/template"
 
 	"github.com/google/uuid"
@@ -39,10 +38,6 @@ func New(db *sql.DB) *runner {
 		"uuid": func() string { return uuid.New().String() },
 		"set":  random.Set,
 		"ref":  r.reference,
-		"join": strings.Join,
-		"times": func(i int) []struct{} {
-			return make([]struct{}, i)
-		},
 	}
 
 	r.helpers = map[string]interface{}{
