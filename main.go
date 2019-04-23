@@ -8,9 +8,9 @@ import (
 	"os"
 	"time"
 
-	"github.com/codingconcepts/datagen/internal/pkg/runner"
-
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
+	"github.com/codingconcepts/datagen/internal/pkg/runner"
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
 

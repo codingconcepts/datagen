@@ -203,7 +203,65 @@ Time functions can be used to generate multi-line DML.  The number after the und
 {{end}}
 ```
 
+## Other database types:
+
+### MySQL
+
+#### Setup
+
+``` sql
+CREATE TABLE `person` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL,
+  `date_of_birth` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `pet` (
+  `pid` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+```
+
+#### Script
+
+Notice that with MySQL's lack of a `returning` clause, we instead select a random record from the `person` table when inserting pet records, which is less efficient but provides a workaround.
+
+``` sql
+-- REPEAT 10
+-- NAME person
+insert into `person` (`name`, `date_of_birth`) values
+{{range $i, $e := $.times_1000 }}
+	{{if $i}},{{end}}
+	(
+		'{{s 10 10 "p-"}}',
+		'{{d "1900-01-01" "2019-04-23" "2006-01-02" }}'
+	)
+{{end}}
+
+-- REPEAT 10
+-- NAME pet
+insert into `pet` (`pid`, `name`) values
+{{range $i, $e := .times_100 }}
+	{{if $i}},{{end}}
+	(
+		(select `id` from `person` order by rand() limit 1),
+		'{{s 10 10 "a-"}}'
+	)
+{{end}};
+
+-- EOF
+```
+
+### Execute
+
+```
+go run main.go -script mysql.sql --driver mysql --conn root@/sandbox
+```
+
 ## Todos
 
-* Runtime test against different types of databases.
 * Refactor `parse.Blocks` function to it's easier to read.
+* Ability to `ref` multiple fields from the same row.
