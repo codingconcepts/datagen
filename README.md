@@ -4,7 +4,7 @@ A snappy CLI data generator for databases.
 ## Installation
 
 ``` bash
-go get -u /github.com/codingconcepts/datagen
+go get -u github.com/codingconcepts/datagen
 ```
 
 ## Usage
