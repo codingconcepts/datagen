@@ -178,5 +178,5 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Test a custom date struct that has a configurable format field and has scan and value methods.
+* Fixed referencing of dates.
 * Refactor `parse.Blocks` function to it's easier to read.
