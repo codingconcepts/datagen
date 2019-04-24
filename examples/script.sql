@@ -1,4 +1,4 @@
--- REPEAT 10
+-- REPEAT 100
 -- NAME owner
 insert into "owner" ("name", "date_of_birth") values
 {{range $i, $e := $.times_1000 }}
@@ -10,7 +10,7 @@ insert into "owner" ("name", "date_of_birth") values
 {{end}}
 returning "id", "name";
 
--- REPEAT 10
+-- REPEAT 100
 -- NAME pet
 insert into "pet" ("pid", "name", "owner_name") values
 {{range $i, $e := .times_100 }}

@@ -178,7 +178,5 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Add a progress bar
 * Test a custom date struct that has a configurable format field and has scan and value methods.
 * Refactor `parse.Blocks` function to it's easier to read.
-* Ability to `ref` multiple fields from the same row.

@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 
+	"gopkg.in/cheggaaa/pb.v1"
+
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	"github.com/codingconcepts/datagen/internal/pkg/runner"
 	_ "github.com/go-sql-driver/mysql"
@@ -44,13 +46,28 @@ func main() {
 		log.Fatalf("error reading blocks from script file: %v", err)
 	}
 
+	bar := newProgressBar(blocks)
 	for _, block := range blocks {
 		for i := 0; i < block.Repeat; i++ {
+			bar.Increment()
 			if err = runner.Run(block); err != nil {
 				log.Fatalf("error running block: %v", err)
 			}
 		}
 	}
+	bar.FinishPrint("Finished")
+}
+
+func newProgressBar(blocks []parse.Block) *pb.ProgressBar {
+	var count int
+	for _, block := range blocks {
+		count += block.Repeat
+	}
+
+	bar := pb.New(count)
+	bar.SetRefreshRate(time.Millisecond * 100)
+	bar.ShowCounters = false
+	return bar.Start()
 }
 
 func mustConnect(driver, connStr string) *sql.DB {
