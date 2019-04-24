@@ -36,6 +36,30 @@ func TestString(t *testing.T) {
 	}
 }
 
+func BenchmarkString(b *testing.B) {
+	cases := []struct {
+		name   string
+		min    int64
+		max    int64
+		prefix string
+	}{
+		{name: "1 1 no prefix", min: 1, max: 1, prefix: ""},
+		{name: "1 1 prefix", min: 1, max: 1, prefix: "a"},
+		{name: "10 10 no prefix", min: 10, max: 10, prefix: ""},
+		{name: "10 10 prefix", min: 10, max: 10, prefix: "a"},
+		{name: "1 10 no prefix", min: 1, max: 10, prefix: ""},
+		{name: "1 10 prefix", min: 1, max: 10, prefix: "a"},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				String(c.min, c.max, c.prefix)
+			}
+		})
+	}
+}
+
 func TestInt(t *testing.T) {
 	cases := []struct {
 		name string
@@ -51,6 +75,26 @@ func TestInt(t *testing.T) {
 			i := Int(c.min, c.max)
 			test.Assert(t, i >= c.min)
 			test.Assert(t, i <= c.max)
+		})
+	}
+}
+
+func BenchmarkInt(b *testing.B) {
+	cases := []struct {
+		name string
+		min  int64
+		max  int64
+	}{
+		{name: "1 1", min: 1, max: 1},
+		{name: "10 10", min: 10, max: 10},
+		{name: "1 10", min: 1, max: 10},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				Int(c.min, c.max)
+			}
 		})
 	}
 }
@@ -102,6 +146,30 @@ func TestDate(t *testing.T) {
 	}
 }
 
+func BenchmarkDate(b *testing.B) {
+	cases := []struct {
+		name   string
+		min    string
+		max    string
+		format string
+	}{
+		{name: "min eq max date", min: "2019-01-02", max: "2019-01-02", format: "2006-01-02"},
+		{name: "min eq max date and time", min: "2019-01-02 03:04:05", max: "2019-01-02 03:04:05", format: "2006-01-02 15:04:05"},
+		{name: "min lt max date", min: "2018-01-02", max: "2019-01-02", format: "2006-01-02"},
+		{name: "min lt max date and time", min: "2018-01-02 03:04:05", max: "2019-01-02 03:04:05", format: "2006-01-02 15:04:05"},
+		{name: "min gt max date", min: "2019-01-02", max: "2018-01-02", format: "2006-01-02"},
+		{name: "min gt max date and time", min: "2019-01-02 03:04:05", max: "2018-01-02 03:04:05", format: "2006-01-02 15:04:05"},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				Date(c.min, c.max, c.format)
+			}
+		})
+	}
+}
+
 func TestFloat(t *testing.T) {
 	cases := []struct {
 		name string
@@ -121,6 +189,26 @@ func TestFloat(t *testing.T) {
 	}
 }
 
+func BenchmarkFloat(b *testing.B) {
+	cases := []struct {
+		name string
+		min  float64
+		max  float64
+	}{
+		{name: "1.23 1.23", min: 1.23, max: 1.23},
+		{name: "10.23 10.23", min: 10.23, max: 10.23},
+		{name: "1.23 10.23", min: 1.23, max: 10.23},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				Float(c.min, c.max)
+			}
+		})
+	}
+}
+
 func TestSet(t *testing.T) {
 	cases := []struct {
 		name string
@@ -133,6 +221,24 @@ func TestSet(t *testing.T) {
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			Set(c.set...)
+		})
+	}
+}
+
+func BenchmarkSet(b *testing.B) {
+	cases := []struct {
+		name  string
+		items []string
+	}{
+		{name: "one item", items: []string{"a"}},
+		{name: "multiple items", items: []string{"a", "b", "c"}},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				Set(c.items...)
+			}
 		})
 	}
 }

@@ -60,13 +60,11 @@ func Date(minStr, maxStr, format string) string {
 	if min == max {
 		return min.UTC().Format(format)
 	}
+	if min.Unix() > max.Unix() {
+		min, max = max, min
+	}
 
 	diff := between64(min.Unix(), max.Unix())
-
-	// Ensure max is greater than min.
-	if diff < 0 {
-		diff = -diff
-	}
 
 	return time.Unix(diff, 0).UTC().Format(format)
 }
