@@ -7,6 +7,9 @@ test:
 	go test ./... -v ;\
 	go test ./... -cover
 
+bench:
+	go test ./... -bench=.
+
 cover:
 	go test ./... -coverprofile=coverage.out -coverpkg=\
 	github.com/codingconcepts/datagen/internal/pkg/parse,\
