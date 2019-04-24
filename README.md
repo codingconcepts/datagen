@@ -1,6 +1,10 @@
 # datagen
 A snappy CLI data generator for databases.
 
+If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
+
+`datagen` takes its instructions from a configuration file.  These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and use Go's [text/template](https://golang.org/pkg/text/template/) language to acheive this.
+
 ## Installation
 
 ``` bash
@@ -8,8 +12,6 @@ go get -u github.com/codingconcepts/datagen
 ```
 
 ## Usage
-
-datagen accepts a configuration file that can execute any number of SQL queries.  SQL queries are built up using Go's [text/template](https://golang.org/pkg/text/template/) language, so can take advantage of multi-row DML for faster inserts etc.
 
 See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for an example that works using the `make example` command.  When running the executable, use the following syntax:
 
