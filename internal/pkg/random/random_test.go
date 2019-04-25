@@ -21,11 +21,18 @@ func TestString(t *testing.T) {
 		{name: "length 2 with prefix", min: 2, max: 2, prefix: "aa"},
 		{name: "different lengths 2 without prefix", min: 1, max: 10, prefix: ""},
 		{name: "different lengths 2 with prefix", min: 1, max: 10, prefix: "a"},
+		{name: "min > max without prefix", min: 10, max: 1, prefix: ""},
+		{name: "min > max with prefix", min: 10, max: 1, prefix: "a"},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			s := String(c.min, c.max, c.prefix)
+
+			if c.min > c.max {
+				c.min, c.max = c.max, c.min
+			}
+
 			test.Assert(t, int64(len(s)) >= c.min)
 			test.Assert(t, int64(len(s)) <= c.max)
 
@@ -68,11 +75,17 @@ func TestInt(t *testing.T) {
 	}{
 		{name: "min eq max", min: 1, max: 1},
 		{name: "min lt max", min: 1, max: 10},
+		{name: "min gt max", min: 10, max: 1},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			i := Int(c.min, c.max)
+
+			if c.min > c.max {
+				c.min, c.max = c.max, c.min
+			}
+
 			test.Assert(t, i >= c.min)
 			test.Assert(t, i <= c.max)
 		})
@@ -101,20 +114,42 @@ func BenchmarkInt(b *testing.B) {
 
 func TestDate(t *testing.T) {
 	cases := []struct {
-		name   string
-		min    string
-		max    string
-		format string
+		name     string
+		min      string
+		max      string
+		format   string
+		expError bool
 	}{
 		{name: "min eq max", min: "2019-04-23", max: "2019-04-23", format: "2006-01-02"},
+		{name: "min eq max without format", min: "2019-04-23 01:02:03", max: "2019-04-23 01:02:03"},
 		{name: "min lt max", min: "2018-04-23", max: "2019-04-23", format: "2006-01-02"},
+		{name: "min lt max without format", min: "2018-04-23 01:02:03", max: "2019-04-23 01:02:03"},
 		{name: "min gt max", min: "2019-04-23", max: "2018-04-23", format: "2006-01-02"},
-		{name: "min gt max without format", min: "2019-04-23 01:02:03", max: "2018-04-23 01:02:03", format: ""},
+		{name: "min gt max without format", min: "2019-04-23 01:02:03", max: "2018-04-23 01:02:03"},
+		{name: "min parse failure", min: "2019-13-32", expError: true},
+		{name: "max parse failure", min: "2019-04-23", max: "2019-13-32", format: "2006-01-02", expError: true},
+		{name: "max parse failure", min: "2019-04-23", max: "2019-04-23", format: "1006-01-02", expError: true},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
+			var gotError bool
+
+			// Prevent tests from crashing in the event of an error.
+			origLogFatalf := logFatalf
+			defer func() { logFatalf = origLogFatalf }()
+			logFatalf = func(format string, args ...interface{}) {
+				gotError = true
+			}
+
 			d := Date(c.min, c.max, c.format)
+
+			if c.expError {
+				if !gotError {
+					t.Fatal("expected an error parsing but didn't get one")
+				}
+				return
+			}
 
 			format := c.format
 			if format == "" {
@@ -178,11 +213,17 @@ func TestFloat(t *testing.T) {
 	}{
 		{name: "min eq max", min: 1, max: 1},
 		{name: "min lt max", min: 1, max: 10},
+		{name: "min gt max", min: 10, max: 1},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			i := Float(c.min, c.max)
+
+			if c.min > c.max {
+				c.min, c.max = c.max, c.min
+			}
+
 			test.Assert(t, i >= c.min)
 			test.Assert(t, i <= c.max)
 		})

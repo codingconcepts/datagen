@@ -7,7 +7,8 @@ import (
 )
 
 var (
-	ascii = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	logFatalf = log.Fatalf
+	ascii     = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 const (
@@ -21,7 +22,7 @@ func String(min, max int64, prefix string) string {
 	}
 
 	var length int64
-	if min >= max {
+	if min == max {
 		length = min
 	} else {
 		length = between64(min, max) - int64(len(prefix))
@@ -50,18 +51,15 @@ func Date(minStr, maxStr, format string) string {
 
 	min, err := time.Parse(format, minStr)
 	if err != nil {
-		log.Fatalf("invalid min date: %v", err)
+		logFatalf("invalid min date: %v", err)
 	}
 	max, err := time.Parse(format, maxStr)
 	if err != nil {
-		log.Fatalf("invalid max date: %v", err)
+		logFatalf("invalid max date: %v", err)
 	}
 
 	if min == max {
 		return min.UTC().Format(format)
-	}
-	if min.Unix() > max.Unix() {
-		min, max = max, min
 	}
 
 	diff := between64(min.Unix(), max.Unix())
@@ -71,6 +69,13 @@ func Date(minStr, maxStr, format string) string {
 
 // Float returns a random 64 bit float between a minimum and maximum.
 func Float(min, max float64) float64 {
+	if min == max {
+		return min
+	}
+	if min > max {
+		min, max = max, min
+	}
+
 	return min + rand.Float64()*(max-min)
 }
 
