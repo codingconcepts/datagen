@@ -1,7 +1,7 @@
 ![datagen logo](assets/logo.png)
 ================================
 
-[![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen) [![Coverage Status](https://coveralls.io/repos/github/codingconcepts/datagen/badge.svg?branch=master)](https://coveralls.io/github/codingconcepts/datagen?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen) [![Build Status](https://travis-ci.org/codingconcepts/datagen.svg?branch=master)](https://travis-ci.org/codingconcepts/datagen) [![Coverage Status](https://coveralls.io/repos/github/codingconcepts/datagen/badge.svg?branch=master)](https://coveralls.io/github/codingconcepts/datagen?branch=master)
 
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
