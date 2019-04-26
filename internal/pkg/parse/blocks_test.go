@@ -19,11 +19,7 @@ func TestBlocks(t *testing.T) {
 
 	-- NAME c
 	-- REPEAT 3
-	C
-	
-	-- NAME d
-	-- REPEAT 4
-	`
+	C`
 
 	blocks, err := Blocks(strings.NewReader(input))
 	if err != nil {
@@ -43,10 +39,6 @@ func TestBlocks(t *testing.T) {
 	test.Equals(t, "c", blocks[2].Name)
 	test.Equals(t, 3, blocks[2].Repeat)
 	test.Equals(t, "C", blocks[2].Body)
-
-	test.Equals(t, "d", blocks[2].Name)
-	test.Equals(t, 4, blocks[2].Repeat)
-	test.Equals(t, "", blocks[2].Body)
 }
 
 func TestBlocksRepeat(t *testing.T) {
