@@ -3,6 +3,8 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen)
 
+[![Coverage Status](https://coveralls.io/repos/github/codingconcepts/datagen/badge.svg?branch=master)](https://coveralls.io/github/codingconcepts/datagen?branch=master)
+
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
 `datagen` takes its instructions from a configuration file.  These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and Go's [text/template](https://golang.org/pkg/text/template/) language is used to acheive this.
