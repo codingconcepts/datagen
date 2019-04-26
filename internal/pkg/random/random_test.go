@@ -14,6 +14,7 @@ func TestString(t *testing.T) {
 		min    int64
 		max    int64
 		prefix string
+		set    string
 	}{
 		{name: "length 1 without prefix", min: 1, max: 1, prefix: ""},
 		{name: "length 1 with prefix", min: 1, max: 1, prefix: "a"},
@@ -23,11 +24,18 @@ func TestString(t *testing.T) {
 		{name: "different lengths 2 with prefix", min: 1, max: 10, prefix: "a"},
 		{name: "min > max without prefix", min: 10, max: 1, prefix: ""},
 		{name: "min > max with prefix", min: 10, max: 1, prefix: "a"},
+		{name: "custom set without prefix", min: 10, max: 10, prefix: "", set: "ab"},
+		{name: "custom set with prefix", min: 10, max: 10, prefix: "c", set: "ab"},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			s := String(c.min, c.max, c.prefix)
+			var s string
+			if c.set != "" {
+				s = String(c.min, c.max, c.prefix, c.set)
+			} else {
+				s = String(c.min, c.max, c.prefix)
+			}
 
 			if c.min > c.max {
 				c.min, c.max = c.max, c.min
@@ -38,6 +46,10 @@ func TestString(t *testing.T) {
 
 			if c.prefix != "" {
 				test.Assert(t, strings.HasPrefix(s, c.prefix))
+			}
+
+			if c.set != "" {
+				runesInSet(t, []rune(c.set), []rune(strings.TrimPrefix(s, c.prefix)))
 			}
 		})
 	}
@@ -276,4 +288,19 @@ func BenchmarkSet(b *testing.B) {
 			}
 		})
 	}
+}
+
+func runesInSet(t *testing.T, exp, act []rune) {
+	for _, a := range act {
+		runeInSet(t, a, exp)
+	}
+}
+
+func runeInSet(t *testing.T, r rune, set []rune) {
+	for _, s := range set {
+		if r == s {
+			return
+		}
+	}
+	t.Fatalf("rune %v not found in set", r)
 }

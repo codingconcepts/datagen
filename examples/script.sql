@@ -17,7 +17,7 @@ insert into "pet" ("pid", "name", "owner_name", "owner_date_of_birth") values
 	{{if $i}},{{end}}
 	(
 		'{{row "owner" "id" $i}}',
-		'{{string 10 10 "p-"}}',
+		'{{string 10 10 "p-" "abcde"}}',
 		'{{row "owner" "name" $i}}',
 		'{{row "owner" "date_of_birth" $i}}'
 	)

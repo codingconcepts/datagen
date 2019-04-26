@@ -53,13 +53,14 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 Generates a random string between a given minimum and maximum length with an optional prefix:
 
 ```
-'{{string 5 10 "l-"}}'
+'{{string 5 10 "l-" "abcABC"}}'
 ```
 
 `string` the name of the function<br/>
 `5` the minimum string length including any prefix<br/>
 `10` the maximum string length including any prefix<br/>
 `"l-"` the prefix<br/>
+`"abcABC"` *(optional)* the set of characters to select from<br/>
 
 Note that the apostrophes will wrap the string, turning it into a database string.
 
@@ -184,3 +185,8 @@ insert into `pet` (`pid`, `name`) values
 ## Todos
 
 * Refactor `parse.Blocks` function to it's easier to read.
+
+* Better string generation for example:
+
+`{{string "%s.%s@acme.com" 5 10}}` to generate something like "a30sP.17LmC5SA0p@acme.com"
+`{{string "%s.%s@acme.com" 5abc 10def}}` to generate something like "ccaba.ffefddeddf@acme.com"
