@@ -30,12 +30,7 @@ func TestString(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			var s string
-			if c.set != "" {
-				s = String(c.min, c.max, c.prefix, c.set)
-			} else {
-				s = String(c.min, c.max, c.prefix)
-			}
+			s := String(c.min, c.max, c.prefix, c.set)
 
 			if c.min > c.max {
 				c.min, c.max = c.max, c.min
@@ -61,6 +56,7 @@ func BenchmarkString(b *testing.B) {
 		min    int64
 		max    int64
 		prefix string
+		set    string
 	}{
 		{name: "1 1 no prefix", min: 1, max: 1, prefix: ""},
 		{name: "1 1 prefix", min: 1, max: 1, prefix: "a"},
@@ -68,12 +64,14 @@ func BenchmarkString(b *testing.B) {
 		{name: "10 10 prefix", min: 10, max: 10, prefix: "a"},
 		{name: "1 10 no prefix", min: 1, max: 10, prefix: ""},
 		{name: "1 10 prefix", min: 1, max: 10, prefix: "a"},
+		{name: "1 10 not prefix set", min: 1, max: 10, prefix: "", set: "abcABC"},
+		{name: "1 10 prefix set", min: 1, max: 10, prefix: "a", set: "abcABC"},
 	}
 
 	for _, c := range cases {
 		b.Run(c.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				String(c.min, c.max, c.prefix)
+				String(c.min, c.max, c.prefix, c.set)
 			}
 		})
 	}

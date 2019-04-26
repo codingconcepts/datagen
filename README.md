@@ -24,10 +24,9 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 | Flag | Description |
 | ----- | ----------- |
 | `-conn` | The full database connection string (enclosed in quotes) |
-| `-datefmt` | An optional string that determines the format of all database dates |
 | `-driver` | The name of the database driver to use [postgres, mysql] |
 | `-script` | The full path to the script file to use (enclosed in quotes) |
-
+| `-datefmt` | *(optional)* `time.Time` format string that determines the format of all database and template dates.  Defaults to "2006-01-02" |
 
 ## Concepts
 

@@ -3,7 +3,6 @@ package random
 import (
 	"log"
 	"math/rand"
-	"strings"
 	"time"
 )
 
@@ -13,7 +12,7 @@ var (
 )
 
 // String returns a random string between two lengths.
-func String(min, max int64, prefix string, set ...string) string {
+func String(min, max int64, prefix string, set string) string {
 	if int64(len(prefix)) >= max {
 		return prefix
 	}
@@ -26,8 +25,8 @@ func String(min, max int64, prefix string, set ...string) string {
 	}
 
 	runes := ascii
-	if len(set) > 0 {
-		runes = []rune(strings.Join(set, ""))
+	if set != "" {
+		runes = []rune(set)
 	}
 
 	output := []rune{}

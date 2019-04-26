@@ -4,8 +4,8 @@ insert into "owner" ("name", "date_of_birth") values
 {{range $i, $e := $.times_1000 }}
 	{{if $i}},{{end}}
 	(
-		'{{string 10 10 "o-"}}',
-		'{{date "1900-01-01" "2019-04-23" }}'
+		'{{string 10 10 "o-" ""}}',
+		'{{date "1900-01-01" "2019-04-23"}}'
 	)
 {{end}}
 returning "id", "name", "date_of_birth";
