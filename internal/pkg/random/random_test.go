@@ -121,11 +121,8 @@ func TestDate(t *testing.T) {
 		expError bool
 	}{
 		{name: "min eq max", min: "2019-04-23", max: "2019-04-23", format: "2006-01-02"},
-		{name: "min eq max without format", min: "2019-04-23 01:02:03", max: "2019-04-23 01:02:03"},
 		{name: "min lt max", min: "2018-04-23", max: "2019-04-23", format: "2006-01-02"},
-		{name: "min lt max without format", min: "2018-04-23 01:02:03", max: "2019-04-23 01:02:03"},
 		{name: "min gt max", min: "2019-04-23", max: "2018-04-23", format: "2006-01-02"},
-		{name: "min gt max without format", min: "2019-04-23 01:02:03", max: "2018-04-23 01:02:03"},
 		{name: "min parse failure", min: "2019-13-32", expError: true},
 		{name: "max parse failure", min: "2019-04-23", max: "2019-13-32", format: "2006-01-02", expError: true},
 		{name: "max parse failure", min: "2019-04-23", max: "2019-04-23", format: "1006-01-02", expError: true},
@@ -142,7 +139,8 @@ func TestDate(t *testing.T) {
 				gotError = true
 			}
 
-			d := Date(c.min, c.max, c.format)
+			df := Date(c.format)
+			d := df(c.min, c.max)
 
 			if c.expError {
 				if !gotError {
@@ -151,17 +149,12 @@ func TestDate(t *testing.T) {
 				return
 			}
 
-			format := c.format
-			if format == "" {
-				format = dateFormat
-			}
-
-			minD, err := time.Parse(format, c.min)
+			minD, err := time.Parse(c.format, c.min)
 			if err != nil {
 				t.Fatalf("invalid min format: %v", err)
 			}
 
-			maxD, err := time.Parse(format, c.max)
+			maxD, err := time.Parse(c.format, c.max)
 			if err != nil {
 				t.Fatalf("invalid max format: %v", err)
 			}
@@ -170,7 +163,7 @@ func TestDate(t *testing.T) {
 				minD, maxD = maxD, minD
 			}
 
-			dD, err := time.Parse(format, d)
+			dD, err := time.Parse(c.format, d)
 			if err != nil {
 				t.Fatalf("invalid d format: %v", err)
 			}
@@ -198,8 +191,9 @@ func BenchmarkDate(b *testing.B) {
 
 	for _, c := range cases {
 		b.Run(c.name, func(b *testing.B) {
+			d := Date(c.format)
 			for i := 0; i < b.N; i++ {
-				Date(c.min, c.max, c.format)
+				d(c.min, c.max)
 			}
 		})
 	}

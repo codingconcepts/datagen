@@ -23,6 +23,7 @@ func main() {
 	driver := flag.String("driver", "", "name of the database driver to use [postgres|mysql]")
 	script := flag.String("script", "", "the full or relative path to your script file")
 	conn := flag.String("conn", "", "the database connection string")
+	dateFmt := flag.String("datefmt", "2006-01-02", "the Go date format for all database dates")
 	flag.Parse()
 
 	if *script == "" || *driver == "" || *conn == "" {
@@ -33,7 +34,7 @@ func main() {
 	db := mustConnect(*driver, *conn)
 	defer db.Close()
 
-	runner := runner.New(db)
+	runner := runner.New(db, runner.WithDateFormat(*dateFmt))
 
 	file, err := os.Open(*script)
 	if err != nil {

@@ -11,10 +11,6 @@ var (
 	ascii     = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
-const (
-	dateFormat = "2006-01-02 15:04:05"
-)
-
 // String returns a random string between two lengths.
 func String(min, max int64, prefix string) string {
 	if int64(len(prefix)) >= max {
@@ -41,33 +37,30 @@ func Int(min, max int64) int64 {
 	return between64(min, max)
 }
 
-// Date returns a random date between two dates in format provided
-// by the caller, returning a formatted UTC date in the same format.
-// Defaults to 2006-01-02 15:04:05, if one isn't provided.
-func Date(minStr, maxStr, format string) string {
-	if format == "" {
-		format = dateFormat
+// Date returns a random date between two dates and formats it
+// as a string provided by Runner.
+func Date(dateFormat string) func(minStr, maxStr string) string {
+	return func(minStr, maxStr string) string {
+		min, err := time.Parse(dateFormat, minStr)
+		if err != nil {
+			logFatalf("invalid min date: %v", err)
+			return "" // Break out early for tests.
+		}
+
+		max, err := time.Parse(dateFormat, maxStr)
+		if err != nil {
+			logFatalf("invalid max date: %v", err)
+			return "" // Break out early for tests.
+		}
+
+		if min == max {
+			return min.UTC().Format(dateFormat)
+		}
+
+		diff := between64(min.Unix(), max.Unix())
+
+		return time.Unix(diff, 0).UTC().Format(dateFormat)
 	}
-
-	min, err := time.Parse(format, minStr)
-	if err != nil {
-		logFatalf("invalid min date: %v", err)
-		return "" // Break out early for tests.
-	}
-
-	max, err := time.Parse(format, maxStr)
-	if err != nil {
-		logFatalf("invalid max date: %v", err)
-		return "" // Break out early for tests.
-	}
-
-	if min == max {
-		return min.UTC().Format(format)
-	}
-
-	diff := between64(min.Unix(), max.Unix())
-
-	return time.Unix(diff, 0).UTC().Format(format)
 }
 
 // Float returns a random 64 bit float between a minimum and maximum.

@@ -7,10 +7,11 @@ import (
 	"math/rand"
 	"reflect"
 	"text/template"
-
-	"github.com/google/uuid"
+	"time"
 
 	"github.com/codingconcepts/datagen/internal/pkg/random"
+
+	"github.com/google/uuid"
 
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	"github.com/pkg/errors"
@@ -18,12 +19,14 @@ import (
 
 var logFatalf = log.Fatalf
 
-type runner struct {
+type Runner struct {
 	db           *sql.DB
 	funcs        template.FuncMap
 	helpers      map[string]interface{}
 	context      map[string][]map[string]interface{}
 	contextGroup map[rowKey]map[string]interface{}
+
+	dateFormat string
 }
 
 type rowKey struct {
@@ -31,17 +34,21 @@ type rowKey struct {
 	groupID   int
 }
 
-func New(db *sql.DB) *runner {
-	r := runner{
+func New(db *sql.DB, opts ...Option) *Runner {
+	r := Runner{
 		db:           db,
 		context:      map[string][]map[string]interface{}{},
 		contextGroup: map[rowKey]map[string]interface{}{},
 	}
 
+	for _, opt := range opts {
+		opt(&r)
+	}
+
 	r.funcs = template.FuncMap{
 		"s":    random.String,
 		"i":    random.Int,
-		"d":    random.Date,
+		"d":    random.Date(r.dateFormat),
 		"f":    random.Float,
 		"uuid": func() string { return uuid.New().String() },
 		"set":  random.Set,
@@ -62,7 +69,7 @@ func New(db *sql.DB) *runner {
 }
 
 // Run executes a given block, returning any errors encountered.
-func (r *runner) Run(b parse.Block) error {
+func (r *Runner) Run(b parse.Block) error {
 	tmpl, err := template.New("block").Funcs(r.funcs).Parse(b.Body)
 	if err != nil {
 		return errors.Wrap(err, "parsing template")
@@ -81,7 +88,7 @@ func (r *runner) Run(b parse.Block) error {
 	return r.scan(b, rows)
 }
 
-func (r *runner) scan(b parse.Block, rows *sql.Rows) error {
+func (r *Runner) scan(b parse.Block, rows *sql.Rows) error {
 	for rows.Next() {
 		columnTypes, err := rows.ColumnTypes()
 		if err != nil {
@@ -104,7 +111,7 @@ func (r *runner) scan(b parse.Block, rows *sql.Rows) error {
 
 		curr := map[string]interface{}{}
 		for i, ct := range columnTypes {
-			values[i] = reflect.ValueOf(values[i]).Elem()
+			values[i] = r.prepareValue(reflect.ValueOf(values[i]).Elem())
 			curr[ct.Name()] = values[i]
 		}
 		r.context[b.Name] = append(r.context[b.Name], curr)
@@ -113,7 +120,20 @@ func (r *runner) scan(b parse.Block, rows *sql.Rows) error {
 	return nil
 }
 
-func (r *runner) reference(key string, column string) interface{} {
+// prepareValue ensures that data being read out of the database following
+// a scan is in the correct format for being re-inserted into the database
+// during follow-up queries.
+func (r *Runner) prepareValue(v reflect.Value) interface{} {
+	switch v.Type() {
+	case reflect.TypeOf(time.Time{}):
+		t := v.Interface().(time.Time)
+		return t.Format(r.dateFormat)
+	default:
+		return v
+	}
+}
+
+func (r *Runner) reference(key string, column string) interface{} {
 	rows, ok := r.context[key]
 	if !ok {
 		logFatalf("key %v not found in context", key)
@@ -129,7 +149,7 @@ func (r *runner) reference(key string, column string) interface{} {
 	return value
 }
 
-func (r *runner) row(key string, column string, group int) interface{} {
+func (r *Runner) row(key string, column string, group int) interface{} {
 	groupKey := rowKey{groupType: key, groupID: group}
 
 	// Check if we've scanned this row before.

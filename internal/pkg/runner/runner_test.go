@@ -3,9 +3,9 @@ package runner
 import (
 	"database/sql"
 	"database/sql/driver"
-	"fmt"
 	"log"
 	"testing"
+	"time"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
@@ -53,7 +53,7 @@ func TestRun(t *testing.T) {
 			b: parse.Block{
 				Repeat: 1,
 				Name:   "owner",
-				Body:   `insert into "owner" ("name") values ("Alice") returning "id", "name"`,
+				Body:   `insert into "owner" ("name") values ("Alice") returning "id", "name", "date_of_birth"`,
 			},
 		},
 	}
@@ -63,13 +63,12 @@ func TestRun(t *testing.T) {
 			resetMock()
 			r := New(db)
 
+			id, name, dob := 123, "Alice", time.Date(2019, time.January, 2, 3, 4, 5, 0, time.UTC)
+
 			if !c.expError {
-				rows := []driver.Value{
-					123,
-					"Alice",
-				}
-				mock.ExpectQuery(`insert into "owner" (.*) values (.*) returning "id"`).WillReturnRows(
-					sqlmock.NewRows([]string{"id", "name"}).AddRow(rows...))
+				rows := []driver.Value{id, name, dob}
+				mock.ExpectQuery(`insert into "owner" (.*) values (.*) returning "id", "name", "date_of_birth"`).WillReturnRows(
+					sqlmock.NewRows([]string{"id", "name", "date_of_birth"}).AddRow(rows...))
 			}
 
 			err := r.Run(c.b)
@@ -80,11 +79,14 @@ func TestRun(t *testing.T) {
 
 			// Check the values committed to context, doing a string
 			// comparison, as we're operating against reflect.Values.
-			id := r.reference(c.b.Name, "id")
-			test.Equals(t, "123", fmt.Sprintf("%v", id))
+			actID := r.reference(c.b.Name, "id")
+			test.StringEquals(t, id, actID)
 
-			name := r.reference(c.b.Name, "name")
-			test.Equals(t, "Alice", fmt.Sprintf("%v", name))
+			actName := r.reference(c.b.Name, "name")
+			test.StringEquals(t, name, actName)
+
+			actDob := r.reference(c.b.Name, "date_of_birth")
+			test.StringEquals(t, dob, actDob)
 		})
 	}
 }

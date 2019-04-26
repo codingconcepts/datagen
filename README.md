@@ -19,6 +19,16 @@ See the [examples](https://github.com/codingconcepts/datagen/tree/master/example
 datagen -script input.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
 ```
 
+`datagen` accepts the following arguments:
+
+| Flag  | Description |
+| ------------- | ------------- |
+| -conn | The full database connection string (enclosed in quotes) |
+| -datefmt | An optional string that determines the format of all database dates |
+| -driver | The name of the database driver to use [postgres, mysql] |
+| -script | The full path to the script file to use (enclosed in quotes) |
+
+
 ## Concepts
 
 | Object  | Description |
@@ -73,16 +83,15 @@ Generates a random 64 bit integer between a minimum and maximum value.
 
 ##### d
 
-Generates a random date between two dates.  Optionally takes a date format to use, allowing you to target different databases.  Note that all dates will be in UTC format when they enter the database.
+Generates a random date between two dates.
 
 ```
-'{{d "2018-01-02" "2019-01-02" "2006-01-02" }}'
+'{{d "2018-01-02" "2019-01-02" }}'
 ```
 
 `d` the name of the function<br/>
 `"2018-01-02"` the minimum date to generate<br/>
 `"2019-01-02"` the maximum date to generate<br/>
-`"2006-01-02"` the date format to use for parsing the min and max dates and also the date that will be sent to the database (uses Go's `time.Time` formatting rules).  If not provided, this will default to `time.RFC3339` for min, max and output.<br/>
 
 ##### f
 
@@ -180,5 +189,4 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Fixed referencing of dates.
 * Refactor `parse.Blocks` function to it's easier to read.
