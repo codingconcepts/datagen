@@ -4,8 +4,8 @@ insert into "owner" ("name", "date_of_birth") values
 {{range $i, $e := $.times_1000 }}
 	{{if $i}},{{end}}
 	(
-		'{{s 10 10 "o-"}}',
-		'{{d "1900-01-01" "2019-04-23" }}'
+		'{{string 10 10 "o-"}}',
+		'{{date "1900-01-01" "2019-04-23" }}'
 	)
 {{end}}
 returning "id", "name", "date_of_birth";
@@ -17,7 +17,7 @@ insert into "pet" ("pid", "name", "owner_name", "owner_date_of_birth") values
 	{{if $i}},{{end}}
 	(
 		'{{row "owner" "id" $i}}',
-		'{{s 10 10 "p-"}}',
+		'{{string 10 10 "p-"}}',
 		'{{row "owner" "name" $i}}',
 		'{{row "owner" "date_of_birth" $i}}'
 	)

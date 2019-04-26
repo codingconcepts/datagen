@@ -59,10 +59,10 @@ Causing block parsing to stop, essentially simulating the natural end-of-file.  
 Generates a random string between a given minimum and maximum length with an optional prefix:
 
 ```
-'{{s 5 10 "l-"}}'
+'{{string 5 10 "l-"}}'
 ```
 
-`s` the name of the function<br/>
+`string` the name of the function<br/>
 `5` the minimum string length including any prefix<br/>
 `10` the maximum string length including any prefix<br/>
 `"l-"` the prefix<br/>
@@ -74,10 +74,10 @@ Note that the apostrophes will wrap the string, turning it into a database strin
 Generates a random 64 bit integer between a minimum and maximum value.
 
 ```
-{{i 5 10}}
+{{int 5 10}}
 ```
 
-`i` the name of the function<br/>
+`int` the name of the function<br/>
 `5` the minimum number to generate<br/>
 `10` the maximum number to generate<br/>
 
@@ -86,10 +86,10 @@ Generates a random 64 bit integer between a minimum and maximum value.
 Generates a random date between two dates.
 
 ```
-'{{d "2018-01-02" "2019-01-02" }}'
+'{{date "2018-01-02" "2019-01-02" }}'
 ```
 
-`d` the name of the function<br/>
+`date` the name of the function<br/>
 `"2018-01-02"` the minimum date to generate<br/>
 `"2019-01-02"` the maximum date to generate<br/>
 
@@ -98,10 +98,10 @@ Generates a random date between two dates.
 Generates a random 64 bit float between a minimum and maximum value. 
 
 ```
-{{f 1.2345678901 2.3456789012}}
+{{float 1.2345678901 2.3456789012}}
 ```
 
-`f` the name of the function<br/>
+`float` the name of the function<br/>
 `1.2345678901` the minimum number to generate<br/>
 `2.3456789012` the maximum number to generate<br/>
 
@@ -180,7 +180,7 @@ insert into `pet` (`pid`, `name`) values
 	{{if $i}},{{end}}
 	(
 		(select `id` from `person` order by rand() limit 1),
-		'{{s 10 10 "a-"}}'
+		'{{string 10 10 "a-"}}'
 	)
 {{end}};
 

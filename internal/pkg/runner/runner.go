@@ -46,14 +46,14 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	}
 
 	r.funcs = template.FuncMap{
-		"s":    random.String,
-		"i":    random.Int,
-		"d":    random.Date(r.dateFormat),
-		"f":    random.Float,
-		"uuid": func() string { return uuid.New().String() },
-		"set":  random.Set,
-		"ref":  r.reference,
-		"row":  r.row,
+		"string": random.String,
+		"int":    random.Int,
+		"date":   random.Date(r.dateFormat),
+		"float":  random.Float,
+		"uuid":   func() string { return uuid.New().String() },
+		"set":    random.Set,
+		"ref":    r.reference,
+		"row":    r.row,
 	}
 
 	r.helpers = map[string]interface{}{
