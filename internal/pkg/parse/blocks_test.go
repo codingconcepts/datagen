@@ -8,6 +8,47 @@ import (
 	"github.com/codingconcepts/datagen/internal/pkg/test"
 )
 
+func TestBlocks(t *testing.T) {
+	input := `-- NAME a
+	-- REPEAT 1
+	A
+
+	-- NAME b
+	-- REPEAT 2
+	B
+
+	-- NAME c
+	-- REPEAT 3
+	C
+	
+	-- NAME d
+	-- REPEAT 4
+	`
+
+	blocks, err := Blocks(strings.NewReader(input))
+	if err != nil {
+		t.Fatalf("error parsing blocks: %v", err)
+	}
+
+	test.Equals(t, 3, len(blocks))
+
+	test.Equals(t, "a", blocks[0].Name)
+	test.Equals(t, 1, blocks[0].Repeat)
+	test.Equals(t, "A", blocks[0].Body)
+
+	test.Equals(t, "b", blocks[1].Name)
+	test.Equals(t, 2, blocks[1].Repeat)
+	test.Equals(t, "B", blocks[1].Body)
+
+	test.Equals(t, "c", blocks[2].Name)
+	test.Equals(t, 3, blocks[2].Repeat)
+	test.Equals(t, "C", blocks[2].Body)
+
+	test.Equals(t, "d", blocks[2].Name)
+	test.Equals(t, 4, blocks[2].Repeat)
+	test.Equals(t, "", blocks[2].Body)
+}
+
 func TestBlocksRepeat(t *testing.T) {
 	cases := []struct {
 		name     string

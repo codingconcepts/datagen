@@ -1,0 +1,14 @@
+language: go
+
+go:
+- 1.10.x
+- 1.11.x
+- 1.12.x
+- master
+
+before_install:
+  - go get -u -d gopkg.in/cheggaaa/pb.v1
+  - go get -u -d github.com/go-sql-driver/mysql
+  - go get -u -d github.com/lib/pq
+  - go get -u -d github.com/pkg/errors
+  - go get -u -d github.com/google/uuid
