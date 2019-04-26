@@ -3,7 +3,7 @@
 
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
-`datagen` takes its instructions from a configuration file.  These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and use Go's [text/template](https://golang.org/pkg/text/template/) language to acheive this.
+`datagen` takes its instructions from a configuration file.  These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and Go's [text/template](https://golang.org/pkg/text/template/) language is used to acheive this.
 
 ## Installation
 
@@ -13,48 +13,42 @@ go get -u github.com/codingconcepts/datagen
 
 ## Usage
 
-See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for an example that works using the `make example` command.  When running the executable, use the following syntax:
+See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a Postgres/CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
 
 ```
-datagen -script input.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
+datagen -script script.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
 ```
 
 `datagen` accepts the following arguments:
 
-| Flag  | Description |
-| ------------- | ------------- |
-| -conn | The full database connection string (enclosed in quotes) |
-| -datefmt | An optional string that determines the format of all database dates |
-| -driver | The name of the database driver to use [postgres, mysql] |
-| -script | The full path to the script file to use (enclosed in quotes) |
+| Flag | Description |
+| ----- | ----------- |
+| `-conn` | The full database connection string (enclosed in quotes) |
+| `-datefmt` | An optional string that determines the format of all database dates |
+| `-driver` | The name of the database driver to use [postgres, mysql] |
+| `-script` | The full path to the script file to use (enclosed in quotes) |
 
 
 ## Concepts
 
-| Object  | Description |
-| ------------- | ------------- |
+| Object | Description |
+| ------ | ----------- |
 | Block | A block of text within a configuration file that performs a series of operations against a database. |
-| Script  | A script is a text file (typically called `input.sql` but this is optional) that contains a number of blocks. |
+| Script | A script is a text file that contains a number of blocks. |
 
 ### Comments
 
-`datagen` uses the Go text/templating engine where possible but where it's not possible to use that, it makes use of comments.  The following comments provide instructions to `datagen` during block parsing. 
+`datagen` uses Go's [text/template](https://golang.org/pkg/text/template/) engine where possible but where it's not possible to use that, it parses and makes use of comments.  The following comments provide instructions to `datagen` during block parsing. 
 
-`-- REPEAT N`
-
-Repeat the block that directly follows the comment N times.  If this comment isn't provided, a block will be executed once.  Consider this when using the `.times_*` helpers to insert a large amount of data.  For example `-- REPEAT 100` when used in conjunction with `.times_1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.
-
-`-- NAME`
-
-Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples).  Only omit this for single-block configurations.
-
-`-- EOF`
-
-Causing block parsing to stop, essentially simulating the natural end-of-file.  If this comment isn't provided, the parse will parse all blocks in the script.
+| Comment | Description |
+| ------- | ----------- |
+| `-- REPEAT N` | Repeat the block that directly follows the comment N times.  If this comment isn't provided, a block will be executed once.  Consider this when using the `.times_*` helpers to insert a large amount of data.  For example `-- REPEAT 100` when used in conjunction with `.times_1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples. |
+| `-- NAME` | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples).  Only omit this for single-block configurations. |
+| `-- EOF` | Causing block parsing to stop, essentially simulating the natural end-of-file.  If this comment isn't provided, the parse will parse all blocks in the script. |
 
 #### Custom functions
 
-##### s
+##### string
 
 Generates a random string between a given minimum and maximum length with an optional prefix:
 
@@ -69,7 +63,7 @@ Generates a random string between a given minimum and maximum length with an opt
 
 Note that the apostrophes will wrap the string, turning it into a database string.
 
-##### i
+##### int
 
 Generates a random 64 bit integer between a minimum and maximum value.
 
@@ -81,7 +75,7 @@ Generates a random 64 bit integer between a minimum and maximum value.
 `5` the minimum number to generate<br/>
 `10` the maximum number to generate<br/>
 
-##### d
+##### date
 
 Generates a random date between two dates.
 
@@ -93,7 +87,7 @@ Generates a random date between two dates.
 `"2018-01-02"` the minimum date to generate<br/>
 `"2019-01-02"` the maximum date to generate<br/>
 
-##### f
+##### float
 
 Generates a random 64 bit float between a minimum and maximum value. 
 
