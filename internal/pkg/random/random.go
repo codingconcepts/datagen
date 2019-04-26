@@ -52,10 +52,13 @@ func Date(minStr, maxStr, format string) string {
 	min, err := time.Parse(format, minStr)
 	if err != nil {
 		logFatalf("invalid min date: %v", err)
+		return "" // Break out early for tests.
 	}
+
 	max, err := time.Parse(format, maxStr)
 	if err != nil {
 		logFatalf("invalid max date: %v", err)
+		return "" // Break out early for tests.
 	}
 
 	if min == max {

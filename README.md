@@ -122,7 +122,7 @@ Selects a random string from a set of possible options.
 References a random value from a previous block's returned values (cached in memory).  For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
 
 ```
-'{{ref "owner_id"}}',
+'{{ref "owner" "id"}}',
 ```
 
 `ref` the name of the function<br/>

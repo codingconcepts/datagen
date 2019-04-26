@@ -16,6 +16,8 @@ import (
 	"github.com/pkg/errors"
 )
 
+var logFatalf = log.Fatalf
+
 type runner struct {
 	db           *sql.DB
 	funcs        template.FuncMap
@@ -61,7 +63,10 @@ func New(db *sql.DB) *runner {
 
 // Run executes a given block, returning any errors encountered.
 func (r *runner) Run(b parse.Block) error {
-	tmpl := template.Must(template.New("block").Funcs(r.funcs).Parse(b.Body))
+	tmpl, err := template.New("block").Funcs(r.funcs).Parse(b.Body)
+	if err != nil {
+		return errors.Wrap(err, "parsing template")
+	}
 
 	buf := &bytes.Buffer{}
 	if err := tmpl.Execute(buf, r.helpers); err != nil {
@@ -111,24 +116,31 @@ func (r *runner) scan(b parse.Block, rows *sql.Rows) error {
 func (r *runner) reference(key string, column string) interface{} {
 	rows, ok := r.context[key]
 	if !ok {
-		log.Fatalf("key %v not found in context", key)
+		logFatalf("key %v not found in context", key)
+		return nil // Break out early for tests.
 	}
 
 	value, ok := rows[rand.Intn(len(rows))][column]
 	if !ok {
-		log.Fatalf("key %v not found in context", key)
+		logFatalf("key %v not found in context", key)
+		return nil // Break out early for tests.
 	}
 
 	return value
 }
 
-func (r *runner) row(key string, column string, i int) interface{} {
-	groupKey := rowKey{groupType: key, groupID: i}
+func (r *runner) row(key string, column string, group int) interface{} {
+	groupKey := rowKey{groupType: key, groupID: group}
 
 	// Check if we've scanned this row before.
 	row, ok := r.contextGroup[groupKey]
 	if ok {
-		return row[column]
+		value, ok := row[column]
+		if !ok {
+			logFatalf("key %v not found in context", key)
+			return nil // Break out early for tests.
+		}
+		return value
 	}
 
 	// Get a random item from the row context and cache it for the next read.
@@ -140,5 +152,11 @@ func (r *runner) row(key string, column string, i int) interface{} {
 
 	r.contextGroup[groupKey] = randomValue
 
-	return randomValue[column]
+	value, ok := randomValue[column]
+	if !ok {
+		logFatalf("key %v not found in context", key)
+		return nil // Break out early for tests.
+	}
+
+	return value
 }
