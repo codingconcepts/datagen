@@ -1,5 +1,5 @@
-# datagen
-A snappy CLI data generator for databases.
+![datagen logo](assets/logo.png)
+================================
 
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
