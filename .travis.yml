@@ -12,3 +12,6 @@ before_install:
   - go get -u -d github.com/lib/pq
   - go get -u -d github.com/pkg/errors
   - go get -u -d github.com/google/uuid
+
+script:
+  make test
