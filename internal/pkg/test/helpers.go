@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-// StringsEquals performs a comparison against two values
+// StringEquals performs a comparison against two values
 // values by comparing their string values and fails if
 // they are not the same.
 func StringEquals(tb testing.TB, expected, actual interface{}) {

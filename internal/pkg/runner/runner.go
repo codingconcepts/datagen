@@ -19,6 +19,7 @@ import (
 
 var logFatalf = log.Fatalf
 
+// Runner holds the configuration that will be used at runtime.
 type Runner struct {
 	db           *sql.DB
 	funcs        template.FuncMap
@@ -34,6 +35,8 @@ type rowKey struct {
 	groupID   int
 }
 
+// New returns a pointer to a newly configured Runner.  Optionally
+// taking a variable number of configuration options.
 func New(db *sql.DB, opts ...Option) *Runner {
 	r := Runner{
 		db:           db,

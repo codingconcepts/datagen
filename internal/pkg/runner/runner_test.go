@@ -1,9 +1,8 @@
 package runner
 
 import (
-	"database/sql"
 	"database/sql/driver"
-	"log"
+	"reflect"
 	"testing"
 	"time"
 
@@ -11,18 +10,6 @@ import (
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	"github.com/codingconcepts/datagen/internal/pkg/test"
 )
-
-var (
-	db   *sql.DB
-	mock sqlmock.Sqlmock
-)
-
-func resetMock() {
-	var err error
-	if db, mock, err = sqlmock.New(); err != nil {
-		log.Fatalf("error creating sqlmock: %v", err)
-	}
-}
 
 func TestRun(t *testing.T) {
 	cases := []struct {
@@ -180,6 +167,34 @@ func TestRow(t *testing.T) {
 
 				test.Equals(t, lv, act)
 			}
+		})
+	}
+}
+
+func TestPrepareValue(t *testing.T) {
+	r := New(db, WithDateFormat("20060102"))
+
+	cases := []struct {
+		name  string
+		value interface{}
+		exp   interface{}
+	}{
+		{
+			name:  "string",
+			value: "Alice",
+			exp:   "Alice",
+		},
+		{
+			name:  "time.Time",
+			value: time.Date(2019, time.July, 8, 9, 0, 1, 0, time.UTC),
+			exp:   "20190708",
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			act := r.prepareValue(reflect.ValueOf(c.value))
+			test.StringEquals(t, c.exp, act)
 		})
 	}
 }

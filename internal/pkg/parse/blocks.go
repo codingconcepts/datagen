@@ -28,6 +28,8 @@ type Block struct {
 	Body string
 }
 
+// Blocks reads an input reader line by line, parsing blocks than
+// can be executed by the Runner.
 func Blocks(r io.Reader) ([]Block, error) {
 	scanner := bufio.NewScanner(r)
 
