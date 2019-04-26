@@ -12,6 +12,7 @@ before_install:
   - go get -u -d github.com/lib/pq
   - go get -u -d github.com/pkg/errors
   - go get -u -d github.com/google/uuid
+  - go get -u -d github.com/DATA-DOG/go-sqlmock
 
 script:
   make test
