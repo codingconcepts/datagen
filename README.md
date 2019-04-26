@@ -13,7 +13,7 @@ go get -u github.com/codingconcepts/datagen
 
 ## Usage
 
-See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a Postgres/CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
+See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
 
 ```
 datagen -script script.sql --driver postgres --conn postgres://root@localhost:26257/sml?sslmode=disable
