@@ -48,6 +48,41 @@ func TestBlocks(t *testing.T) {
 	test.Equals(t, 3, len(blocks))
 }
 
+func BenchmarkBlock(b *testing.B) {
+	cases := []struct {
+		name  string
+		input string
+	}{
+		{
+			name:  "one block",
+			input: "insert into table (one, two) values (1, 2);",
+		},
+		{
+			name: "ten blocks",
+			input: "-- NAME 0\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 1\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 2\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 3\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 4\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 5\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 6\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 7\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 8\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n" +
+				"-- NAME 9\n-- REPEAT 1\ninsert into table (one, two) values (1, 2);\n\n",
+		},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			r := strings.NewReader(c.input)
+
+			for i := 0; i < b.N; i++ {
+				Blocks(r)
+			}
+		})
+	}
+}
+
 func TestBlocksRepeat(t *testing.T) {
 	cases := []struct {
 		name     string
