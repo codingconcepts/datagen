@@ -176,7 +176,7 @@ insert into `pet` (`pid`, `name`) values
 	{{if $i}},{{end}}
 	(
 		(select `id` from `person` order by rand() limit 1),
-		'{{string 10 10 "a-"}}'
+		'{{string 10 10 "a-" ""}}'
 	)
 {{end}};
 
