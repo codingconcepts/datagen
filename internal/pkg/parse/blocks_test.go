@@ -17,12 +17,15 @@ func TestBlocks(t *testing.T) {
 	-- REPEAT 2
 	B
 
+	-- NAME e
+	-- REPEAT 4
+
 	-- NAME c
 	-- REPEAT 3
 	C
 	
-	-- NAME d
-	-- REPEAT 4`
+	-- NAME e
+	-- REPEAT 5`
 
 	blocks, err := Blocks(strings.NewReader(input))
 	if err != nil {
