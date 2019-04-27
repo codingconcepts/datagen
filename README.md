@@ -185,6 +185,8 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
+* Integration tests.
+
 * Refactor `parse.Blocks` function to it's easier to read.
 
 * Better string generation for example:

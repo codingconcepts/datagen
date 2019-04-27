@@ -19,14 +19,15 @@ func TestBlocks(t *testing.T) {
 
 	-- NAME c
 	-- REPEAT 3
-	C`
+	C
+	
+	-- NAME d
+	-- REPEAT 4`
 
 	blocks, err := Blocks(strings.NewReader(input))
 	if err != nil {
 		t.Fatalf("error parsing blocks: %v", err)
 	}
-
-	test.Equals(t, 3, len(blocks))
 
 	test.Equals(t, "a", blocks[0].Name)
 	test.Equals(t, 1, blocks[0].Repeat)
@@ -39,6 +40,9 @@ func TestBlocks(t *testing.T) {
 	test.Equals(t, "c", blocks[2].Name)
 	test.Equals(t, 3, blocks[2].Repeat)
 	test.Equals(t, "C", blocks[2].Body)
+
+	// Note that nothing is parsed for block d.
+	test.Equals(t, 3, len(blocks))
 }
 
 func TestBlocksRepeat(t *testing.T) {
