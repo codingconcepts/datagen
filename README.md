@@ -187,8 +187,6 @@ insert into `pet` (`pid`, `name`) values
 
 * Integration tests.
 
-* Refactor `parse.Blocks` function to it's easier to read.
-
 * Better string generation for example:
 
 `{{string "%s.%s@acme.com" 5 10}}` to generate something like "a30sP.17LmC5SA0p@acme.com"

@@ -29,60 +29,65 @@ type Block struct {
 }
 
 // Blocks reads an input reader line by line, parsing blocks than
-// can be executed by the Runner.
+// can be executed by the Runner.  If a block does not have an
+// explicit REPEAT value, a default of 1 will be used.
 func Blocks(r io.Reader) ([]Block, error) {
 	scanner := bufio.NewScanner(r)
-
-	b := strings.Builder{}
 	output := []Block{}
-	current := Block{Repeat: 1}
 
-	// Function to call whenever we've hit the gap between statements
-	// or have reach the end of the file (either through manual EOF,
-	// or the actual EOF).
-	addAndReset := func(body string) {
-		if body != "" {
-			current.Body = body
-			output = append(output, current)
+	for {
+		ok, block, err := parseBlock(scanner)
+		if err != nil {
+			return nil, err
 		}
-		b.Reset()
-		current = Block{Repeat: 1}
+		if block.Body != "" {
+			output = append(output, block)
+		}
+		if !ok {
+			return output, nil
+		}
 	}
+}
 
+func parseBlock(scanner *bufio.Scanner) (ok bool, block Block, err error) {
+	b := strings.Builder{}
+	block.Repeat = 1
 	for scanner.Scan() {
 		t := strings.Trim(scanner.Text(), " \t")
 
+		if strings.HasPrefix(t, commentName) {
+			block.Name = parseName(t)
+			continue
+		}
+
 		if strings.HasPrefix(t, commentRepeat) {
 			var err error
-			if current.Repeat, err = parseRepeat(t); err != nil {
-				return nil, errors.Wrap(err, "parsing repeat")
+			if block.Repeat, err = parseRepeat(t); err != nil {
+				return false, Block{}, errors.Wrap(err, "parsing repeat")
 			}
 			continue
 		}
 
-		if strings.HasPrefix(t, commentName) {
-			current.Name = parseName(t)
-			continue
-		}
-
-		// We've hit the gap between statements, add this block to
-		// the output slice and reset.
+		// We've hit the gap between statements or the end of
+		// the file, break out and signal that there could be
+		// more blocks to come.
 		if t == "" {
-			addAndReset(b.String())
-			continue
+			block.Body = b.String()
+			return true, block, nil
 		}
 
-		// We've hit the end of the file.
+		// We've git the user-defined EOF, break out and signal
+		// that there are no more blocks to come.
 		if strings.HasPrefix(t, commentEOF) {
-			addAndReset(b.String())
-			break
+			block.Body = b.String()
+			return false, block, nil
 		}
+
 		b.WriteString(t)
 	}
-	addAndReset(b.String())
 
-	err := scanner.Err()
-	return output, err
+	block.Body = b.String()
+	return false, block, scanner.Err()
 }
 
 func parseRepeat(input string) (int, error) {
