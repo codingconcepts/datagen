@@ -140,22 +140,12 @@ func TestDate(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			var gotError bool
-
-			// Prevent tests from crashing in the event of an error.
-			origLogFatalf := logFatalf
-			defer func() { logFatalf = origLogFatalf }()
-			logFatalf = func(format string, args ...interface{}) {
-				gotError = true
-			}
-
 			df := Date(c.format)
-			d := df(c.min, c.max)
+			d, err := df(c.min, c.max)
+			test.ErrorExists(t, c.expError, err)
 
+			// Don't continue if we expect an error.
 			if c.expError {
-				if !gotError {
-					t.Fatal("expected an error parsing but didn't get one")
-				}
 				return
 			}
 

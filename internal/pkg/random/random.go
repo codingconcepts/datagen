@@ -1,14 +1,14 @@
 package random
 
 import (
-	"log"
 	"math/rand"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 var (
-	logFatalf = log.Fatalf
-	ascii     = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	ascii = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
 // String returns a random string between two lengths.
@@ -44,27 +44,25 @@ func Int(min, max int64) int64 {
 
 // Date returns a random date between two dates and formats it
 // as a string provided by Runner.
-func Date(dateFormat string) func(minStr, maxStr string) string {
-	return func(minStr, maxStr string) string {
+func Date(dateFormat string) func(minStr, maxStr string) (string, error) {
+	return func(minStr, maxStr string) (string, error) {
 		min, err := time.Parse(dateFormat, minStr)
 		if err != nil {
-			logFatalf("invalid min date: %v", err)
-			return "" // Break out early for tests.
+			return "", errors.Wrap(err, "parsing min date")
 		}
 
 		max, err := time.Parse(dateFormat, maxStr)
 		if err != nil {
-			logFatalf("invalid max date: %v", err)
-			return "" // Break out early for tests.
+			return "", errors.Wrap(err, "parsing max date")
 		}
 
 		if min == max {
-			return min.UTC().Format(dateFormat)
+			return min.UTC().Format(dateFormat), nil
 		}
 
 		diff := between64(min.Unix(), max.Unix())
 
-		return time.Unix(diff, 0).UTC().Format(dateFormat)
+		return time.Unix(diff, 0).UTC().Format(dateFormat), nil
 	}
 }
 

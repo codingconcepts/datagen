@@ -179,8 +179,6 @@ insert into `pet` (`pid`, `name`) values
 		'{{string 10 10 "a-" ""}}'
 	)
 {{end}};
-
--- EOF
 ```
 
 ## Todos

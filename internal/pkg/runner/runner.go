@@ -3,7 +3,6 @@ package runner
 import (
 	"bytes"
 	"database/sql"
-	"log"
 	"reflect"
 	"text/template"
 	"time"
@@ -15,8 +14,6 @@ import (
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	"github.com/pkg/errors"
 )
-
-var logFatalf = log.Fatalf
 
 // Runner holds the configuration that will be used at runtime.
 type Runner struct {
