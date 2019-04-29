@@ -52,7 +52,7 @@ func main() {
 		for i := 0; i < block.Repeat; i++ {
 			bar.Increment()
 			if err = runner.Run(block); err != nil {
-				log.Fatalf("error running block: %v", err)
+				log.Fatalf("error running block %q: %v", block.Name, err)
 			}
 		}
 	}

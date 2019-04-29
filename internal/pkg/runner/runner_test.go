@@ -66,21 +66,27 @@ func TestRun(t *testing.T) {
 
 			// Check the values committed to context, doing a string
 			// comparison, as we're operating against reflect.Values.
-			actID := r.reference(c.b.Name, "id")
+			//
+			// Note that no error expectation cases are being set up,
+			// as we expect there to be values in these cases.
+			actID, err := r.store.reference(c.b.Name, "id")
+			test.ErrorExists(t, false, err)
 			test.StringEquals(t, id, actID)
 
-			actName := r.reference(c.b.Name, "name")
+			actName, err := r.store.reference(c.b.Name, "name")
+			test.ErrorExists(t, false, err)
 			test.StringEquals(t, name, actName)
 
-			actDob := r.reference(c.b.Name, "date_of_birth")
+			actDob, err := r.store.reference(c.b.Name, "date_of_birth")
+			test.ErrorExists(t, false, err)
 			test.StringEquals(t, dob, actDob)
 		})
 	}
 }
 
 func TestReference(t *testing.T) {
-	r := New(db)
-	r.context["owner"] = append(r.context["owner"], map[string]interface{}{
+	s := newStore()
+	s.set("owner", map[string]interface{}{
 		"id":   123,
 		"name": "Alice",
 	})
@@ -100,32 +106,16 @@ func TestReference(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			var gotError bool
-
-			// Prevent tests from crashing in the event of an error.
-			origLogFatalf := logFatalf
-			defer func() { logFatalf = origLogFatalf }()
-			logFatalf = func(format string, args ...interface{}) {
-				gotError = true
-			}
-
-			act := r.reference(c.key, c.column)
-
-			if c.expError {
-				if !gotError {
-					t.Fatal("expected error but didn't get one")
-				}
-				return
-			}
-
+			act, err := s.reference(c.key, c.column)
+			test.ErrorExists(t, c.expError, err)
 			test.Equals(t, c.expValue, act)
 		})
 	}
 }
 
 func TestRow(t *testing.T) {
-	r := New(db)
-	r.context["owner"] = append(r.context["owner"], map[string]interface{}{
+	s := newStore()
+	s.set("owner", map[string]interface{}{
 		"id":   123,
 		"name": "Alice",
 	})
@@ -146,25 +136,9 @@ func TestRow(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			var gotError bool
-
-			// Prevent tests from crashing in the event of an error.
-			origLogFatalf := logFatalf
-			defer func() { logFatalf = origLogFatalf }()
-			logFatalf = func(format string, args ...interface{}) {
-				gotError = true
-			}
-
 			for lk, lv := range c.lookups {
-				act := r.row(c.key, lk, c.group)
-
-				if c.expError {
-					if !gotError {
-						t.Fatal("expected error but didn't get one")
-					}
-					return
-				}
-
+				act, err := s.row(c.key, lk, c.group)
+				test.ErrorExists(t, c.expError, err)
 				test.Equals(t, lv, act)
 			}
 		})

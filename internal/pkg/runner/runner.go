@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"database/sql"
 	"log"
-	"math/rand"
 	"reflect"
 	"text/template"
 	"time"
@@ -21,27 +20,20 @@ var logFatalf = log.Fatalf
 
 // Runner holds the configuration that will be used at runtime.
 type Runner struct {
-	db           *sql.DB
-	funcs        template.FuncMap
-	helpers      map[string]interface{}
-	context      map[string][]map[string]interface{}
-	contextGroup map[rowKey]map[string]interface{}
+	db      *sql.DB
+	funcs   template.FuncMap
+	helpers map[string]interface{}
+	store   *store
 
 	dateFormat string
-}
-
-type rowKey struct {
-	groupType interface{}
-	groupID   int
 }
 
 // New returns a pointer to a newly configured Runner.  Optionally
 // taking a variable number of configuration options.
 func New(db *sql.DB, opts ...Option) *Runner {
 	r := Runner{
-		db:           db,
-		context:      map[string][]map[string]interface{}{},
-		contextGroup: map[rowKey]map[string]interface{}{},
+		db:    db,
+		store: newStore(),
 	}
 
 	for _, opt := range opts {
@@ -55,8 +47,8 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"float":  random.Float,
 		"uuid":   func() string { return uuid.New().String() },
 		"set":    random.Set,
-		"ref":    r.reference,
-		"row":    r.row,
+		"ref":    r.store.reference,
+		"row":    r.store.row,
 	}
 
 	r.helpers = map[string]interface{}{
@@ -117,7 +109,7 @@ func (r *Runner) scan(b parse.Block, rows *sql.Rows) error {
 			values[i] = r.prepareValue(reflect.ValueOf(values[i]).Elem())
 			curr[ct.Name()] = values[i]
 		}
-		r.context[b.Name] = append(r.context[b.Name], curr)
+		r.store.set(b.Name, curr)
 	}
 
 	return nil
@@ -134,52 +126,4 @@ func (r *Runner) prepareValue(v reflect.Value) interface{} {
 	default:
 		return v
 	}
-}
-
-func (r *Runner) reference(key string, column string) interface{} {
-	rows, ok := r.context[key]
-	if !ok {
-		logFatalf("key %v not found in context", key)
-		return nil // Break out early for tests.
-	}
-
-	value, ok := rows[rand.Intn(len(rows))][column]
-	if !ok {
-		logFatalf("key %v not found in context", key)
-		return nil // Break out early for tests.
-	}
-
-	return value
-}
-
-func (r *Runner) row(key string, column string, group int) interface{} {
-	groupKey := rowKey{groupType: key, groupID: group}
-
-	// Check if we've scanned this row before.
-	row, ok := r.contextGroup[groupKey]
-	if ok {
-		value, ok := row[column]
-		if !ok {
-			logFatalf("key %v not found in context", key)
-			return nil // Break out early for tests.
-		}
-		return value
-	}
-
-	// Get a random item from the row context and cache it for the next read.
-	var randomValue map[string]interface{}
-	for _, v := range r.context {
-		randomValue = v[rand.Intn(len(v))]
-		break
-	}
-
-	r.contextGroup[groupKey] = randomValue
-
-	value, ok := randomValue[column]
-	if !ok {
-		logFatalf("key %v not found in context", key)
-		return nil // Break out early for tests.
-	}
-
-	return value
 }
