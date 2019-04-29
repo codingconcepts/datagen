@@ -185,6 +185,8 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
+* Better handling of connection issues during run.
+
 * Integration tests.
 
 * Better string generation for example:
