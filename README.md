@@ -24,7 +24,7 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 `datagen` accepts the following arguments:
 
 | Flag | Description |
-| ----- | ----------- |
+| ---- | ----------- |
 | `-conn` | The full database connection string (enclosed in quotes) |
 | `-driver` | The name of the database driver to use [postgres, mysql] |
 | `-script` | The full path to the script file to use (enclosed in quotes) |
