@@ -2,12 +2,15 @@ package random
 
 import (
 	"math/rand"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
 )
 
 var (
+	utcNow = func() time.Time { return time.Now().UTC() }
+
 	ascii = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 )
 
@@ -43,26 +46,32 @@ func Int(min, max int64) int64 {
 }
 
 // Date returns a random date between two dates and formats it
-// as a string provided by Runner.
-func Date(dateFormat string) func(minStr, maxStr string) (string, error) {
-	return func(minStr, maxStr string) (string, error) {
-		min, err := time.Parse(dateFormat, minStr)
+// as a string provided by Runner.  It can optionally accept a
+// format string to override the Runner's format. Leave empty
+// to use the default.
+func Date(dateFormat string) func(minStr, maxStr, format string) (string, error) {
+	return func(minStr, maxStr, format string) (string, error) {
+		if format == "" {
+			format = dateFormat
+		}
+
+		min, err := parseDate(format, minStr)
 		if err != nil {
 			return "", errors.Wrap(err, "parsing min date")
 		}
 
-		max, err := time.Parse(dateFormat, maxStr)
+		max, err := parseDate(format, maxStr)
 		if err != nil {
 			return "", errors.Wrap(err, "parsing max date")
 		}
 
 		if min == max {
-			return min.UTC().Format(dateFormat), nil
+			return min.UTC().Format(format), nil
 		}
 
 		diff := between64(min.Unix(), max.Unix())
 
-		return time.Unix(diff, 0).UTC().Format(dateFormat), nil
+		return time.Unix(diff, 0).UTC().Format(format), nil
 	}
 }
 
@@ -92,4 +101,12 @@ func between64(min, max int64) int64 {
 		min, max = max, min
 	}
 	return rand.Int63n(max-min) + min
+}
+
+func parseDate(format, input string) (time.Time, error) {
+	if strings.EqualFold(input, "now") {
+		return utcNow(), nil
+	}
+
+	return time.Parse(format, input)
 }

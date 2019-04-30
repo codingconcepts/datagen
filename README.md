@@ -89,6 +89,8 @@ Generates a random date between two dates.
 `"2018-01-02"` the minimum date to generate<br/>
 `"2019-01-02"` the maximum date to generate<br/>
 
+Note that `"now"` can be passed to both the minimum and maximum dates if required.
+
 ##### float
 
 Generates a random 64 bit float between a minimum and maximum value. 

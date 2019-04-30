@@ -123,25 +123,38 @@ func BenchmarkInt(b *testing.B) {
 }
 
 func TestDate(t *testing.T) {
+	date := time.Date(2000, time.January, 2, 3, 4, 5, 6, time.UTC)
+
+	origUTCNow := utcNow
+	utcNow = func() time.Time { return date }
+	defer func() { utcNow = origUTCNow }()
+
 	cases := []struct {
-		name     string
-		min      string
-		max      string
-		format   string
-		expError bool
+		name           string
+		min            string
+		max            string
+		format         string
+		overrideFormat string
+		expError       bool
 	}{
 		{name: "min eq max", min: "2019-04-23", max: "2019-04-23", format: "2006-01-02"},
 		{name: "min lt max", min: "2018-04-23", max: "2019-04-23", format: "2006-01-02"},
 		{name: "min gt max", min: "2019-04-23", max: "2018-04-23", format: "2006-01-02"},
+
 		{name: "min parse failure", min: "2019-13-32", expError: true},
 		{name: "max parse failure", min: "2019-04-23", max: "2019-13-32", format: "2006-01-02", expError: true},
 		{name: "max parse failure", min: "2019-04-23", max: "2019-04-23", format: "1006-01-02", expError: true},
+
+		{name: "override format", min: "20190423", max: "20180423", format: "2006-01-02", overrideFormat: "20060102"},
+		{name: "override format failure", min: "20190423", max: "20180423", format: "2006-01-02", overrideFormat: "20170102", expError: true},
+
+		{name: "override format failure", min: "20190423", max: "20180423", format: "2006-01-02", overrideFormat: "20170102", expError: true},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
 			df := Date(c.format)
-			d, err := df(c.min, c.max)
+			d, err := df(c.min, c.max, c.overrideFormat)
 			test.ErrorExists(t, c.expError, err)
 
 			// Don't continue if we expect an error.
@@ -149,12 +162,17 @@ func TestDate(t *testing.T) {
 				return
 			}
 
-			minD, err := time.Parse(c.format, c.min)
+			format := c.format
+			if c.overrideFormat != "" {
+				format = c.overrideFormat
+			}
+
+			minD, err := time.Parse(format, c.min)
 			if err != nil {
 				t.Fatalf("invalid min format: %v", err)
 			}
 
-			maxD, err := time.Parse(c.format, c.max)
+			maxD, err := time.Parse(format, c.max)
 			if err != nil {
 				t.Fatalf("invalid max format: %v", err)
 			}
@@ -163,7 +181,7 @@ func TestDate(t *testing.T) {
 				minD, maxD = maxD, minD
 			}
 
-			dD, err := time.Parse(c.format, d)
+			dD, err := time.Parse(format, d)
 			if err != nil {
 				t.Fatalf("invalid d format: %v", err)
 			}
@@ -176,10 +194,11 @@ func TestDate(t *testing.T) {
 
 func BenchmarkDate(b *testing.B) {
 	cases := []struct {
-		name   string
-		min    string
-		max    string
-		format string
+		name           string
+		min            string
+		max            string
+		format         string
+		overrideFormat string
 	}{
 		{name: "min eq max date", min: "2019-01-02", max: "2019-01-02", format: "2006-01-02"},
 		{name: "min eq max date and time", min: "2019-01-02 03:04:05", max: "2019-01-02 03:04:05", format: "2006-01-02 15:04:05"},
@@ -187,13 +206,16 @@ func BenchmarkDate(b *testing.B) {
 		{name: "min lt max date and time", min: "2018-01-02 03:04:05", max: "2019-01-02 03:04:05", format: "2006-01-02 15:04:05"},
 		{name: "min gt max date", min: "2019-01-02", max: "2018-01-02", format: "2006-01-02"},
 		{name: "min gt max date and time", min: "2019-01-02 03:04:05", max: "2018-01-02 03:04:05", format: "2006-01-02 15:04:05"},
+
+		{name: "override format", min: "2019-01-02 03:04:05", max: "2018-01-02 03:04:05", format: "2006-01-02 15:04:05", overrideFormat: "20060102"},
+		{name: "override format failure", min: "2019-01-02 03:04:05", max: "2018-01-02 03:04:05", format: "2006-01-02 15:04:05", overrideFormat: "20170102"},
 	}
 
 	for _, c := range cases {
 		b.Run(c.name, func(b *testing.B) {
 			d := Date(c.format)
 			for i := 0; i < b.N; i++ {
-				d(c.min, c.max)
+				d(c.min, c.max, c.overrideFormat)
 			}
 		})
 	}
@@ -274,6 +296,32 @@ func BenchmarkSet(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				Set(c.items...)
 			}
+		})
+	}
+}
+
+func TestParseDate(t *testing.T) {
+	date := time.Date(2000, time.January, 2, 3, 4, 5, 6, time.UTC)
+
+	origUTCNow := utcNow
+	utcNow = func() time.Time { return date }
+	defer func() { utcNow = origUTCNow }()
+
+	cases := []struct {
+		name   string
+		format string
+		exp    string
+	}{
+		{name: "default format", format: "", exp: "2000-01-02"},
+		{name: "custom format", format: time.RFC3339, exp: "2000-01-02T03:04:05Z"},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			d := Date("2006-01-02")
+			act, err := d("now", "now", c.format)
+			test.ErrorExists(t, false, err)
+			test.Equals(t, c.exp, act)
 		})
 	}
 }

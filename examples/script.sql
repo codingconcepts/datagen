@@ -5,7 +5,7 @@ insert into "owner" ("name", "date_of_birth") values
 	{{if $i}},{{end}}
 	(
 		'{{string 10 10 "o-" ""}}',
-		'{{date "1900-01-01" "2019-04-23"}}'
+		'{{date "1900-01-01" "now" ""}}'
 	)
 {{end}}
 returning "id", "name", "date_of_birth";
