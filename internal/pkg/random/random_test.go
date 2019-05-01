@@ -246,7 +246,6 @@ func BenchmarkStringF(b *testing.B) {
 		name   string
 		format string
 		args   []interface{}
-		assert func(string) error
 	}{
 		{
 			name:   "string without arguments",
