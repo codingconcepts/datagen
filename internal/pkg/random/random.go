@@ -1,7 +1,9 @@
 package random
 
 import (
+	"fmt"
 	"math/rand"
+	"regexp"
 	"strings"
 	"time"
 
@@ -12,6 +14,8 @@ var (
 	utcNow = func() time.Time { return time.Now().UTC() }
 
 	ascii = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+	verbPattern = regexp.MustCompile("%[sd]{1}")
 )
 
 // String returns a random string between two lengths.
@@ -38,6 +42,83 @@ func String(min, max int64, prefix string, set string) string {
 	}
 
 	return prefix + string(output)
+}
+
+// StringF returns a random string built around a format string.
+func StringF(d StringFDefaults) func(format string, args ...interface{}) (string, error) {
+	return func(format string, args ...interface{}) (string, error) {
+		fargs := []interface{}{}
+
+		verbs := verbPattern.FindAllString(format, -1)
+
+		min, max, pattern, argIndex := int64(0), int64(0), "", 0
+		var err error
+
+		for _, v := range verbs {
+			switch v[1:] {
+			case "d":
+				min, max, argIndex, err = intArgs(argIndex, d, args...)
+				if err != nil {
+					return "", errors.Wrap(err, "generating integer placeholder")
+				}
+				fargs = append(fargs, Int(min, max))
+			case "s":
+				min, max, pattern, argIndex, err = stringArgs(argIndex, d, args...)
+				if err != nil {
+					return "", errors.Wrap(err, "generating string placeholder")
+				}
+				fargs = append(fargs, String(min, max, "", pattern))
+			}
+		}
+
+		return fmt.Sprintf(format, fargs...), nil
+	}
+}
+
+func intArgs(i int, d StringFDefaults, args ...interface{}) (int64, int64, int, error) {
+	if len(args) <= i {
+		return d.IntMinDefault, d.IntMaxDefault, i, nil
+	}
+
+	// The next 2 args should be integers.
+	min, ok := args[i].(int)
+	if !ok {
+		return 0, 0, 0, fmt.Errorf("argument for min: %v is not an integer", args[i])
+	}
+	max, ok := args[i+1].(int)
+	if !ok {
+		return 0, 0, 0, fmt.Errorf("argument for max: %v is not an integer", args[i])
+	}
+
+	return int64(min), int64(max), i + 2, nil
+}
+
+func stringArgs(i int, d StringFDefaults, args ...interface{}) (int64, int64, string, int, error) {
+	if len(args) <= i {
+		return d.StringMinDefault, d.StringMaxDefault, "", i, nil
+	}
+
+	// The next 2 args should be integers.
+	min, ok := args[i].(int)
+	if !ok {
+		return 0, 0, "", 0, fmt.Errorf("argument for min: %v is not an integer", args[i])
+	}
+
+	max, ok := args[i+1].(int)
+	if !ok {
+		return 0, 0, "", 0, fmt.Errorf("argument for max: %v is not an integer", args[i])
+	}
+
+	// If there's a next argument, it might be a pattern, or for the next verb.
+	if len(args) <= i+2 {
+		return int64(min), int64(max), "", i + 2, nil
+	}
+
+	if s, ok := args[i+2].(string); ok {
+		return int64(min), int64(max), s, i + 3, nil
+	}
+
+	return int64(min), int64(max), "", i + 2, nil
 }
 
 // Int returns a random 64 integer between a minimum and maximum.

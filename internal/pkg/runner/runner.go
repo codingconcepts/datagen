@@ -22,7 +22,8 @@ type Runner struct {
 	helpers map[string]interface{}
 	store   *store
 
-	dateFormat string
+	dateFormat      string
+	stringFdefaults random.StringFDefaults
 }
 
 // New returns a pointer to a newly configured Runner.  Optionally
@@ -31,6 +32,12 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	r := Runner{
 		db:    db,
 		store: newStore(),
+		stringFdefaults: random.StringFDefaults{
+			StringMinDefault: 10,
+			StringMaxDefault: 10,
+			IntMinDefault:    10000,
+			IntMaxDefault:    99999,
+		},
 	}
 
 	for _, opt := range opts {
@@ -38,14 +45,15 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	}
 
 	r.funcs = template.FuncMap{
-		"string": random.String,
-		"int":    random.Int,
-		"date":   random.Date(r.dateFormat),
-		"float":  random.Float,
-		"uuid":   func() string { return uuid.New().String() },
-		"set":    random.Set,
-		"ref":    r.store.reference,
-		"row":    r.store.row,
+		"string":  random.String,
+		"stringf": random.StringF(r.stringFdefaults),
+		"int":     random.Int,
+		"date":    random.Date(r.dateFormat),
+		"float":   random.Float,
+		"uuid":    func() string { return uuid.New().String() },
+		"set":     random.Set,
+		"ref":     r.store.reference,
+		"row":     r.store.row,
 	}
 
 	r.helpers = map[string]interface{}{

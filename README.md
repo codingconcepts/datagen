@@ -65,6 +65,27 @@ Generates a random string between a given minimum and maximum length with an opt
 
 Note that the apostrophes will wrap the string, turning it into a database string.
 
+##### stringf
+
+Generates a formatted string using placeholder syntax:
+
+```
+'{{stringf "%s.%d@acme.com" 5 10 "abc" 10000 20000}}',
+```
+
+`stringf` the name of the function<br/>
+`"%s.%i@acme.com"` the format string<br/>
+`5` the minimum string length for the first string placeholder<br/>
+`10` the minimum string length for the first string placeholder<br/>
+`"abc"` the characters to use for the first string placeholder (leave blank to use defaults)<br/>
+`10000` the minimum value for the integer placeholder<br/>
+`20000` the minimum value for the integer placeholder<br/>
+
+Note that at present only the following verbs are supported:
+
+* %s - a string
+* %d - an integer
+
 ##### int
 
 Generates a random 64 bit integer between a minimum and maximum value.
@@ -188,10 +209,5 @@ insert into `pet` (`pid`, `name`) values
 * Better handling of connection issues during run.
 
 * Integration tests.
-
-* Better string generation for example:
-
-`{{string "%s.%s@acme.com" 5 10}}` to generate something like "a30sP.17LmC5SA0p@acme.com"
-`{{string "%s.%s@acme.com" 5abc 10def}}` to generate something like "ccaba.ffefddeddf@acme.com"
 
 * Migrate to travis-ci.com and add coveralls support back in.

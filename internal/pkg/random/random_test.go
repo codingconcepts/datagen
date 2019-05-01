@@ -1,6 +1,8 @@
 package random
 
 import (
+	"fmt"
+	"strconv"
 	"strings"
 	"testing"
 	"time"
@@ -98,6 +100,191 @@ func TestInt(t *testing.T) {
 
 			test.Assert(t, i >= c.min)
 			test.Assert(t, i <= c.max)
+		})
+	}
+}
+
+func TestStringF(t *testing.T) {
+	defaults := StringFDefaults{
+		StringMinDefault: 10,
+		StringMaxDefault: 10,
+		IntMinDefault:    1000,
+		IntMaxDefault:    1000,
+	}
+
+	cases := []struct {
+		name     string
+		format   string
+		args     []interface{}
+		assert   func(string) error
+		expError bool
+	}{
+		{
+			name:   "string without arguments",
+			format: "%s",
+			assert: func(s string) error {
+				if int64(len(s)) != defaults.StringMaxDefault {
+					return fmt.Errorf("%q length is not equal to %d", s, defaults.StringMaxDefault)
+				}
+				return nil
+			},
+		},
+		{
+			name:   "string with length arguments",
+			format: "%s",
+			args:   []interface{}{20, 20},
+			assert: func(s string) error {
+				if int64(len(s)) != 20 {
+					return fmt.Errorf("%q length is not equal to %d", s, 20)
+				}
+				return nil
+			},
+		},
+		{
+			name:   "string with all arguments",
+			format: "%s",
+			args:   []interface{}{20, 20, "abc"},
+			assert: func(s string) error {
+				if int64(len(s)) != 20 {
+					return fmt.Errorf("%q length is not equal to %d", s, 20)
+				}
+				return nil
+			},
+		},
+		{
+			name:   "string with another placeholder's arguments",
+			format: "%s",
+			args:   []interface{}{20, 20, 30, 30},
+			assert: func(s string) error {
+				if int64(len(s)) != 20 {
+					return fmt.Errorf("%q length is not equal to %d", s, 20)
+				}
+				return nil
+			},
+		},
+		{
+			name:     "string with invalid min argument",
+			format:   "%s",
+			args:     []interface{}{"hello", 20},
+			expError: true,
+		},
+		{
+			name:     "string with invalid max argument",
+			format:   "%s",
+			args:     []interface{}{20, "hello"},
+			expError: true,
+		},
+		{
+			name:   "int without arguments",
+			format: "%d",
+			assert: func(s string) error {
+				i, err := strconv.ParseInt(s, 10, 64)
+				if err != nil {
+					return err
+				}
+
+				if i != defaults.IntMaxDefault {
+					return fmt.Errorf("%q is not equal to %d", s, defaults.IntMaxDefault)
+				}
+				return nil
+			},
+		},
+		{
+			name:   "int with arguments",
+			format: "%d",
+			args:   []interface{}{2000, 2000},
+			assert: func(s string) error {
+				i, err := strconv.ParseInt(s, 10, 64)
+				if err != nil {
+					return err
+				}
+
+				if i != 2000 {
+					return fmt.Errorf("%q is not equal to %d", s, 2000)
+				}
+				return nil
+			},
+		},
+		{
+			name:     "int with invalid min argument",
+			format:   "%d",
+			args:     []interface{}{"hello", 2000},
+			expError: true,
+		},
+		{
+			name:     "int with invalid max argument",
+			format:   "%d",
+			args:     []interface{}{2000, "hello"},
+			expError: true,
+		},
+	}
+
+	for _, c := range cases {
+		t.Run(c.name, func(t *testing.T) {
+			s := StringF(defaults)
+			act, err := s(c.format, c.args...)
+
+			test.ErrorExists(t, c.expError, err)
+			if c.expError {
+				return
+			}
+
+			test.ErrorExists(t, false, c.assert(act))
+		})
+	}
+}
+
+func BenchmarkStringF(b *testing.B) {
+	defaults := StringFDefaults{
+		StringMinDefault: 10,
+		StringMaxDefault: 10,
+		IntMinDefault:    1000,
+		IntMaxDefault:    1000,
+	}
+
+	cases := []struct {
+		name   string
+		format string
+		args   []interface{}
+		assert func(string) error
+	}{
+		{
+			name:   "string without arguments",
+			format: "%s",
+		},
+		{
+			name:   "string with length arguments",
+			format: "%s",
+			args:   []interface{}{20, 20},
+		},
+		{
+			name:   "string with all arguments",
+			format: "%s",
+			args:   []interface{}{20, 20, "abc"},
+		},
+		{
+			name:   "string with another placeholder's arguments",
+			format: "%s",
+			args:   []interface{}{20, 20, 30, 30},
+		},
+		{
+			name:   "int without arguments",
+			format: "%d",
+		},
+		{
+			name:   "int with arguments",
+			format: "%d",
+			args:   []interface{}{2000, 2000},
+		},
+	}
+
+	for _, c := range cases {
+		b.Run(c.name, func(b *testing.B) {
+			s := StringF(defaults)
+
+			for i := 0; i < b.N; i++ {
+				s(c.format, c.args...)
+			}
 		})
 	}
 }
