@@ -1,7 +1,7 @@
--- REPEAT 1
+-- REPEAT 100
 -- NAME owner
 insert into "owner" ("name", "date_of_birth") values
-{{range $i, $e := $.times_10 }}
+{{range $i, $e := $.times_1000 }}
 	{{if $i}},{{end}}
 	(
 		'{{stringf "%s.%s@lush.co.uk" 5 5 "abcdefg" 5 5 "hijklmnop" }}',
@@ -10,12 +10,10 @@ insert into "owner" ("name", "date_of_birth") values
 {{end}}
 returning "id", "name", "date_of_birth";
 
--- EOF
-
 -- REPEAT 10
 -- NAME pet
 insert into "pet" ("pid", "name", "owner_name", "owner_date_of_birth") values
-{{range $i, $e := .times_100 }}
+{{range $i, $e := .times_1000 }}
 	{{if $i}},{{end}}
 	(
 		'{{row "owner" "id" $i}}',
