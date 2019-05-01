@@ -75,6 +75,9 @@ func StringF(d StringFDefaults) func(format string, args ...interface{}) (string
 	}
 }
 
+// intArgs returns the minimum and maximum values to generate between,
+// the next index to use from the arguments provided by the user, and
+// any error that occurred parsing the parameters.
 func intArgs(i int, d StringFDefaults, args ...interface{}) (int64, int64, int, error) {
 	if len(args) <= i {
 		return d.IntMinDefault, d.IntMaxDefault, i, nil
@@ -93,6 +96,10 @@ func intArgs(i int, d StringFDefaults, args ...interface{}) (int64, int64, int, 
 	return int64(min), int64(max), i + 2, nil
 }
 
+// stringArgs returns the minimum and maximum length values to generate
+// between, the character set to use when generating the random string,
+// the next index to use from the arguments provided by the user, and
+// any error that occurred parsing the parameters.
 func stringArgs(i int, d StringFDefaults, args ...interface{}) (int64, int64, string, int, error) {
 	if len(args) <= i {
 		return d.StringMinDefault, d.StringMaxDefault, "", i, nil
