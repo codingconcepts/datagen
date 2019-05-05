@@ -68,9 +68,8 @@ func parseBlock(scanner *bufio.Scanner) (ok bool, block Block, err error) {
 			continue
 		}
 
-		// We've hit the gap between statements or the end of
-		// the file, break out and signal that there could be
-		// more blocks to come.
+		// We've hit the gap between statements,break out and
+		// signal that there could be more blocks to come.
 		if t == "" {
 			block.Body = b.String()
 			return true, block, nil
