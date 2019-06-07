@@ -1,6 +1,6 @@
 package runner
 
-import "github.com/codingconcepts/datagen/internal/pkg/random"
+import "github.com/ejdem86/datagen/internal/pkg/random"
 
 // Option allows the Runner to be configured by the user.
 type Option func(*Runner)

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/codingconcepts/datagen/internal/pkg/test"
+	"github.com/ejdem86/datagen/internal/pkg/test"
 )
 
 func TestBlocks(t *testing.T) {

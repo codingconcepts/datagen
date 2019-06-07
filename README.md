@@ -1,7 +1,4 @@
-![datagen logo](assets/logo.png)
-================================
-
-[![Build Status](https://travis-ci.org/codingconcepts/datagen.svg?branch=master)](https://travis-ci.org/codingconcepts/datagen) [![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen)
+** Forked from https://github.com/codingconcepts/datagen **
 
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
@@ -10,12 +7,12 @@ If you need to generate a lot of random data for your database tables but don't 
 ## Installation
 
 ``` bash
-go get -u github.com/codingconcepts/datagen
+go get -u github.com/ejdem86/datagen
 ```
 
 ## Usage
 
-See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
+See the [examples](https://github.com/ejdem86/datagen/tree/master/examples) directory for a CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
 
 ```
 datagen -script script.sql --driver postgres --conn postgres://root@localhost:26257/sandbox?sslmode=disable
@@ -203,11 +200,3 @@ insert into `pet` (`pid`, `name`) values
 	)
 {{end}};
 ```
-
-## Todos
-
-* Better handling of connection issues during run.
-
-* Integration tests.
-
-* Migrate to travis-ci.com and add coveralls support back in.

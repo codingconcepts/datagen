@@ -12,7 +12,7 @@ bench:
 
 cover:
 	go test ./... -coverprofile=coverage.out -coverpkg=\
-	github.com/codingconcepts/datagen/internal/pkg/parse,\
-	github.com/codingconcepts/datagen/internal/pkg/random,\
-	github.com/codingconcepts/datagen/internal/pkg/runner;\
+	github.com/ejdem86/datagen/internal/pkg/parse,\
+	github.com/ejdem86/datagen/internal/pkg/random,\
+	github.com/ejdem86/datagen/internal/pkg/runner;\
 	go tool cover -html=coverage.out

@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/codingconcepts/datagen/internal/pkg/test"
+	"github.com/ejdem86/datagen/internal/pkg/test"
 )
 
 func TestString(t *testing.T) {

@@ -4,9 +4,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/codingconcepts/datagen/internal/pkg/random"
+	"github.com/ejdem86/datagen/internal/pkg/random"
 
-	"github.com/codingconcepts/datagen/internal/pkg/test"
+	"github.com/ejdem86/datagen/internal/pkg/test"
 )
 
 func TestWithDateFormat(t *testing.T) {

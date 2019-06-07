@@ -7,8 +7,8 @@ import (
 	"time"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
-	"github.com/codingconcepts/datagen/internal/pkg/parse"
-	"github.com/codingconcepts/datagen/internal/pkg/test"
+	"github.com/ejdem86/datagen/internal/pkg/parse"
+	"github.com/ejdem86/datagen/internal/pkg/test"
 )
 
 func TestRun(t *testing.T) {

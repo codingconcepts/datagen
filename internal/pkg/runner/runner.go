@@ -7,11 +7,11 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/codingconcepts/datagen/internal/pkg/random"
+	"github.com/ejdem86/datagen/internal/pkg/random"
 
 	"github.com/google/uuid"
 
-	"github.com/codingconcepts/datagen/internal/pkg/parse"
+	"github.com/ejdem86/datagen/internal/pkg/parse"
 	"github.com/pkg/errors"
 )
 

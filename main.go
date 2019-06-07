@@ -10,8 +10,8 @@ import (
 
 	"gopkg.in/cheggaaa/pb.v1"
 
-	"github.com/codingconcepts/datagen/internal/pkg/parse"
-	"github.com/codingconcepts/datagen/internal/pkg/runner"
+	"github.com/ejdem86/datagen/internal/pkg/parse"
+	"github.com/ejdem86/datagen/internal/pkg/runner"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
