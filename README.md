@@ -6,6 +6,10 @@ If you need to generate a lot of random data for your database tables but don't 
 
 `datagen` takes its instructions from a configuration file. These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and Go's [text/template](https://golang.org/pkg/text/template/) language is used to acheive this.
 
+> "[modelgen](https://github.com/LUSHDigital/modelgen) saves sooo much time. coupled with datagen it just gives you a crazy head start"
+
+> "right now datagen and [modelgen](https://github.com/LUSHDigital/modelgen) are god sends to me"
+
 ## Installation
 
 ```bash
@@ -215,4 +219,4 @@ insert into `pet` (`pid`, `name`) values
 
 - Integration tests.
 
-- Migrate to travis-ci.com and add coveralls support back in.
+* Migrate to travis-ci.com and add coveralls support back in.
