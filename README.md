@@ -107,12 +107,13 @@ Generates a random 64 bit integer between a minimum and maximum value.
 Generates a random date between two dates.
 
 ```
-'{{date "2018-01-02" "2019-01-02" }}'
+'{{date "2018-01-02" "now" "" }}'
 ```
 
 `date` the name of the function<br/>
 `"2018-01-02"` the minimum date to generate<br/>
 `"2019-01-02"` the maximum date to generate<br/>
+`""` the format to use for input dates, left blank to use the value specified by the `-datefmt` flag date.  If overridden, both the minimum and maximum date arguments should be in the overridden format.
 
 Note that `"now"` can be passed to both the minimum and maximum dates if required.
 
