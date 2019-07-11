@@ -1,11 +1,10 @@
-![datagen logo](assets/logo.png)
-================================
+# ![datagen logo](assets/logo.png)
 
 [![Build Status](https://travis-ci.org/codingconcepts/datagen.svg?branch=master)](https://travis-ci.org/codingconcepts/datagen) [![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen)
 
 If you need to generate a lot of random data for your database tables but don't want to spend hours configuring a custom tool for the job, then `datagen` could work for you.
 
-`datagen` takes its instructions from a configuration file.  These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and Go's [text/template](https://golang.org/pkg/text/template/) language is used to acheive this.
+`datagen` takes its instructions from a configuration file. These configuration files can execute any number of SQL queries, taking advantage of multi-row DML for fast inserts and Go's [text/template](https://golang.org/pkg/text/template/) language is used to acheive this.
 
 > "[modelgen](https://github.com/LUSHDigital/modelgen) saves sooo much time. coupled with datagen it just gives you a crazy head start"
 
@@ -13,13 +12,13 @@ If you need to generate a lot of random data for your database tables but don't 
 
 ## Installation
 
-``` bash
+```bash
 go get -u github.com/codingconcepts/datagen
 ```
 
 ## Usage
 
-See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a CockroachDB example that works using the `make example` command.  When running the executable, use the following syntax:
+See the [examples](https://github.com/codingconcepts/datagen/tree/master/examples) directory for a CockroachDB example that works using the `make example` command. When running the executable, use the following syntax:
 
 ```
 datagen -script script.sql --driver postgres --conn postgres://root@localhost:26257/sandbox?sslmode=disable
@@ -27,29 +26,29 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 
 `datagen` accepts the following arguments:
 
-| Flag | Description |
-| ---- | ----------- |
-| `-conn` | The full database connection string (enclosed in quotes) |
-| `-driver` | The name of the database driver to use [postgres, mysql] |
-| `-script` | The full path to the script file to use (enclosed in quotes) |
-| `-datefmt` | *(optional)* `time.Time` format string that determines the format of all database and template dates.  Defaults to "2006-01-02" |
+| Flag       | Description                                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `-conn`    | The full database connection string (enclosed in quotes)                                                                       |
+| `-driver`  | The name of the database driver to use [postgres, mysql]                                                                       |
+| `-script`  | The full path to the script file to use (enclosed in quotes)                                                                   |
+| `-datefmt` | _(optional)_ `time.Time` format string that determines the format of all database and template dates. Defaults to "2006-01-02" |
 
 ## Concepts
 
-| Object | Description |
-| ------ | ----------- |
-| Block | A block of text within a configuration file that performs a series of operations against a database. |
-| Script | A script is a text file that contains a number of blocks. |
+| Object | Description                                                                                          |
+| ------ | ---------------------------------------------------------------------------------------------------- |
+| Block  | A block of text within a configuration file that performs a series of operations against a database. |
+| Script | A script is a text file that contains a number of blocks.                                            |
 
 ### Comments
 
-`datagen` uses Go's [text/template](https://golang.org/pkg/text/template/) engine where possible but where it's not possible to use that, it parses and makes use of comments.  The following comments provide instructions to `datagen` during block parsing. 
+`datagen` uses Go's [text/template](https://golang.org/pkg/text/template/) engine where possible but where it's not possible to use that, it parses and makes use of comments. The following comments provide instructions to `datagen` during block parsing.
 
-| Comment | Description |
-| ------- | ----------- |
-| `-- REPEAT N` | Repeat the block that directly follows the comment N times.  If this comment isn't provided, a block will be executed once.  Consider this when using the `.times_*` helpers to insert a large amount of data.  For example `-- REPEAT 100` when used in conjunction with `.times_1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples. |
-| `-- NAME` | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others.  If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples).  Only omit this for single-block configurations. |
-| `-- EOF` | Causing block parsing to stop, essentially simulating the natural end-of-file.  If this comment isn't provided, the parse will parse all blocks in the script. |
+| Comment       | Description                                                                                                                                                                                                                                                                                                                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `-- REPEAT N` | Repeat the block that directly follows the comment N times. If this comment isn't provided, a block will be executed once. Consider this when using the `.times_*` helpers to insert a large amount of data. For example `-- REPEAT 100` when used in conjunction with `.times_1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.               |
+| `-- NAME`     | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others. If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples). Only omit this for single-block configurations. |
+| `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script.                                                                                                                                                                                                                                  |
 
 #### Custom functions
 
@@ -65,7 +64,7 @@ Generates a random string between a given minimum and maximum length with an opt
 `5` the minimum string length including any prefix<br/>
 `10` the maximum string length including any prefix<br/>
 `"l-"` the prefix<br/>
-`"abcABC"` *(optional)* the set of characters to select from<br/>
+`"abcABC"` _(optional)_ the set of characters to select from<br/>
 
 Note that the apostrophes will wrap the string, turning it into a database string.
 
@@ -87,8 +86,8 @@ Generates a formatted string using placeholder syntax:
 
 Note that at present only the following verbs are supported:
 
-* %s - a string
-* %d - an integer
+- %s - a string
+- %d - an integer
 
 ##### int
 
@@ -117,9 +116,15 @@ Generates a random date between two dates.
 
 Note that `"now"` can be passed to both the minimum and maximum dates if required.
 
+```
+'{{date "now" "now" "2006-01-02 15:04:05" }}'
+```
+
+`"2006-01-02 15:04:05"` the date format you which to be generated
+
 ##### float
 
-Generates a random 64 bit float between a minimum and maximum value. 
+Generates a random 64 bit float between a minimum and maximum value.
 
 ```
 {{float 1.2345678901 2.3456789012}}
@@ -152,7 +157,7 @@ Selects a random string from a set of possible options.
 
 ##### ref
 
-References a random value from a previous block's returned values (cached in memory).  For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
+References a random value from a previous block's returned values (cached in memory). For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
 
 ```
 '{{ref "owner" "id"}}',
@@ -162,7 +167,7 @@ References a random value from a previous block's returned values (cached in mem
 
 ##### row
 
-References a random row from a previous block's returned values and caches it so that values from the same row can be used for other column insert values.  For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs and names, you can use the following syntax to get the ID and name of a random row (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
+References a random row from a previous block's returned values and caches it so that values from the same row can be used for other column insert values. For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs and names, you can use the following syntax to get the ID and name of a random row (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
 
 ```
 '{{row "owner" "id" $i}}',
@@ -176,9 +181,9 @@ References a random row from a previous block's returned values and caches it so
 
 #### Helper functions
 
-##### times_*
+##### times\_\*
 
-Time functions can be used to generate multi-line DML.  The number after the underscore denotes the number of times something will be repeated.  Possible numbers are 1, 10, 100, 1000, 10000, and 100000.
+Time functions can be used to generate multi-line DML. The number after the underscore denotes the number of times something will be repeated. Possible numbers are 1, 10, 100, 1000, 10000, and 100000.
 
 ```
 {{range $i, $e := $.times_1}}
@@ -196,7 +201,7 @@ datagen -script mysql.sql --driver mysql --conn root@/sandbox
 
 With MySQL's lack of a `returning` clause, we instead select a random record from the `person` table when inserting pet records, which is less efficient but provides a workaround.
 
-``` sql
+```sql
 -- REPEAT 10
 -- NAME pet
 insert into `pet` (`pid`, `name`) values
@@ -211,8 +216,8 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Better handling of connection issues during run.
+- Better handling of connection issues during run.
 
-* Integration tests.
+- Integration tests.
 
 * Migrate to travis-ci.com and add coveralls support back in.
