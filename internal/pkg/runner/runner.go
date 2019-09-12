@@ -54,6 +54,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"set":     random.Set,
 		"ref":     r.store.reference,
 		"row":     r.store.row,
+		"each":    r.store.each,
 	}
 
 	r.helpers = map[string]interface{}{
@@ -86,6 +87,12 @@ func (r *Runner) Run(b parse.Block) error {
 	}
 
 	return r.scan(b, rows)
+}
+
+func (r *Runner) Context(name string) {
+	r.store.eachRow = 0
+	r.store.eachGroup = -1
+	r.store.eachContext = name
 }
 
 func (r *Runner) scan(b parse.Block, rows *sql.Rows) error {

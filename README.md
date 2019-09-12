@@ -60,11 +60,11 @@ Generates a random string between a given minimum and maximum length with an opt
 '{{string 5 10 "l-" "abcABC"}}'
 ```
 
-`string` the name of the function<br/>
-`5` the minimum string length including any prefix<br/>
-`10` the maximum string length including any prefix<br/>
-`"l-"` the prefix<br/>
-`"abcABC"` _(optional)_ the set of characters to select from<br/>
+`string` the name of the function.<br/>
+`5` the minimum string length including any prefix.<br/>
+`10` the maximum string length including any prefix.<br/>
+`"l-"` the prefix.<br/>
+`"abcABC"` _(optional)_ the set of characters to select from.<br/>
 
 Note that the apostrophes will wrap the string, turning it into a database string.
 
@@ -76,13 +76,13 @@ Generates a formatted string using placeholder syntax:
 '{{stringf "%s.%d@acme.com" 5 10 "abc" 10000 20000}}',
 ```
 
-`stringf` the name of the function<br/>
-`"%s.%i@acme.com"` the format string<br/>
-`5` the minimum string length for the first string placeholder<br/>
-`10` the minimum string length for the first string placeholder<br/>
-`"abc"` the characters to use for the first string placeholder (leave blank to use defaults)<br/>
-`10000` the minimum value for the integer placeholder<br/>
-`20000` the minimum value for the integer placeholder<br/>
+`stringf` the name of the function.<br/>
+`"%s.%i@acme.com"` the format string.<br/>
+`5` the minimum string length for the first string placeholder.<br/>
+`10` the minimum string length for the first string placeholder.<br/>
+`"abc"` the characters to use for the first string placeholder (leave blank to use defaults).<br/>
+`10000` the minimum value for the integer placeholder.<br/>
+`20000` the minimum value for the integer placeholder.<br/>
 
 Note that at present only the following verbs are supported:
 
@@ -97,9 +97,9 @@ Generates a random 64 bit integer between a minimum and maximum value.
 {{int 5 10}}
 ```
 
-`int` the name of the function<br/>
-`5` the minimum number to generate<br/>
-`10` the maximum number to generate<br/>
+`int` the name of the function.<br/>
+`5` the minimum number to generate.<br/>
+`10` the maximum number to generate.<br/>
 
 ##### date
 
@@ -109,9 +109,9 @@ Generates a random date between two dates.
 '{{date "2018-01-02" "now" "" }}'
 ```
 
-`date` the name of the function<br/>
-`"2018-01-02"` the minimum date to generate<br/>
-`"2019-01-02"` the maximum date to generate<br/>
+`date` the name of the function.<br/>
+`"2018-01-02"` the minimum date to generate.<br/>
+`"2019-01-02"` the maximum date to generate.<br/>
 `""` the format to use for input dates, left blank to use the value specified by the `-datefmt` flag date.  If overridden, both the minimum and maximum date arguments should be in the overridden format.
 
 Note that `"now"` can be passed to both the minimum and maximum dates if required.
@@ -130,9 +130,9 @@ Generates a random 64 bit float between a minimum and maximum value.
 {{float 1.2345678901 2.3456789012}}
 ```
 
-`float` the name of the function<br/>
-`1.2345678901` the minimum number to generate<br/>
-`2.3456789012` the maximum number to generate<br/>
+`float` the name of the function.<br/>
+`1.2345678901` the minimum number to generate.<br/>
+`2.3456789012` the maximum number to generate.<br/>
 
 ##### uuid
 
@@ -152,7 +152,7 @@ Selects a random string from a set of possible options.
 '{{set "alice" "bob" "carol"}}'
 ```
 
-`set` the name of the function<br/>
+`set` the name of the function.<br/>
 `"alice"`|`"bob"` etc. the available options to generate from.<br/>
 
 ##### ref
@@ -163,7 +163,7 @@ References a random value from a previous block's returned values (cached in mem
 '{{ref "owner" "id"}}',
 ```
 
-`ref` the name of the function<br/>
+`ref` the name of the function.<br/>
 
 ##### row
 
@@ -174,10 +174,24 @@ References a random row from a previous block's returned values and caches it so
 '{{row "owner" "name" $i}}'
 ```
 
-`row` the name of the function<br/>
-`owner` the name of the block whose data we're referencing<br/>
-`id` the name of the owner column we'd like<br/>
-`$i` the group identifier for this insert statement.<br/>
+`row` the name of the function.<br/>
+`owner` the name of the block whose data we're referencing.<br/>
+`id` the name of the owner column we'd like.<br/>
+`$i` the group identifier for this insert statement (ensures columns get taken from the same row).<br/>
+
+##### each
+
+Works in a simliar way to `row` but references _sequential_ rows from a previous block's returned values, allowing all of a previous block's rows to have associated rows in a related table, provided the product of `--REPEAT` and `.times_*` is the same as the previous block's.
+
+```
+'{{each "owner" "id" $i "pet"}}',
+'{{each "owner" "name" $i "pet"}}',
+```
+
+`each` the name of the function.<br/>
+`owner` the name of the block whose data we're referencing.<br/>
+`id` the name of the owner column we'd like.<br/>
+`$i` the group identifier for this insert statement (ensures columns get taken from the same row).<br/>
 
 #### Helper functions
 
@@ -216,8 +230,10 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-- Better handling of connection issues during run.
+* Ability to generate specific types of data (first name / last name etc).
 
-- Integration tests.
+* Better handling of connection issues during run.
+
+* Integration tests.
 
 * Migrate to travis-ci.com and add coveralls support back in.
