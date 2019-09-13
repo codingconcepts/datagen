@@ -223,7 +223,7 @@ Generates a random V4 UUID using Google's [uuid](github.com/google/uuid) package
 
 ##### set
 
-Selects a random string from a set of possible options.
+Selects a random string from a set of possible values.
 
 ```
 '{{set "alice" "bob" "carol"}}'
@@ -231,6 +231,24 @@ Selects a random string from a set of possible options.
 
 `set` the name of the function.<br/>
 `"alice"`|`"bob"` etc. the available options to generate from.<br/>
+
+##### wset
+
+Selects a random value from a set of possible values using weighting.
+
+```
+'{{wset "a" 60 "b" 30 "c" 10}}'
+```
+
+`wset` the name of the function.<br/>
+`"a"` the first option.<br/>
+`60` a weight of 60 for the first option.<br/>
+`"b"` the second option.<br/>
+`30` a weight of 30 for the second option.<br/>
+`"c"` the third option.<br/>
+`10` a weight of 10 for the first option.<br/>
+
+Weights can be any number.
 
 ##### fset
 
@@ -311,10 +329,6 @@ insert into `pet` (`pid`, `name`) values
 ```
 
 ## Todos
-
-* Ability for users to base `set` commands from flat files.
-
-* Ability to use weighted averages for `set`.
 
 * Ability to generate specific types of data (first name / last name etc).
 

@@ -30,6 +30,7 @@ type Runner struct {
 	stringFdefaults random.StringFDefaults
 
 	fsets map[string][]string
+	wsets map[string]random.WeightedItems
 }
 
 // New returns a pointer to a newly configured Runner.  Optionally
@@ -46,6 +47,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 			IntMaxDefault:    99999,
 		},
 		fsets: map[string][]string{},
+		wsets: map[string]random.WeightedItems{},
 	}
 
 	for _, opt := range opts {
@@ -60,6 +62,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"float":   random.Float,
 		"uuid":    func() string { return uuid.New().String() },
 		"set":     random.Set,
+		"wset":    r.wset,
 		"fset":    r.loadAndSet,
 		"ref":     r.store.reference,
 		"row":     r.store.row,
@@ -168,4 +171,35 @@ func (r *Runner) loadAndSet(path string) (string, error) {
 	r.fsets[path] = s
 
 	return s[random.Int(0, int64(len(s)))], nil
+}
+
+func (r *Runner) wset(set ...interface{}) (interface{}, error) {
+	b := &errBuilder{b: strings.Builder{}}
+
+	for _, i := range set {
+		b.write(i)
+	}
+
+	if b.err != nil {
+		return nil, b.err
+	}
+
+	// Use a cached weighted set if found.
+	found, ok := r.wsets[b.b.String()]
+	if ok {
+		return found.Choose(), nil
+	}
+
+	items := []random.WeightedItem{}
+	for i, j := 0, 1; j < len(set); i, j = i+2, j+2 {
+		items = append(items, random.WeightedItem{
+			Value:  set[i],
+			Weight: set[j].(int),
+		})
+	}
+
+	witems := random.MakeWeightedItems(items)
+	r.wsets[b.b.String()] = witems
+
+	return witems.Choose(), nil
 }
