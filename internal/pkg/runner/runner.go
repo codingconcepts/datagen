@@ -89,7 +89,7 @@ func (r *Runner) Run(b parse.Block) error {
 	return r.scan(b, rows)
 }
 
-func (r *Runner) Context(name string) {
+func (r *Runner) ResetEach(name string) {
 	r.store.eachRow = 0
 	r.store.eachGroup = -1
 	r.store.eachContext = name

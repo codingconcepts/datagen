@@ -49,7 +49,7 @@ func main() {
 
 	bar := newProgressBar(blocks)
 	for _, block := range blocks {
-		runner.Context(block.Name)
+		runner.ResetEach(block.Name)
 		for i := 0; i < block.Repeat; i++ {
 			bar.Increment()
 			if err = runner.Run(block); err != nil {
