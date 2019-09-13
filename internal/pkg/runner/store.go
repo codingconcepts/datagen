@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-type rowKey struct {
+type groupKey struct {
 	groupType interface{}
 	groupID   int
 }
@@ -15,16 +15,18 @@ type rowKey struct {
 type store struct {
 	mu          sync.RWMutex
 	data        map[string][]map[string]interface{}
-	group       map[rowKey]map[string]interface{}
+	group       map[groupKey]map[string]interface{}
 	eachContext string
-	eachGroup   int
 	eachRow     int
+
+	firstColumn  string
+	currentGroup int
 }
 
 func newStore() *store {
 	return &store{
 		data:  map[string][]map[string]interface{}{},
-		group: map[rowKey]map[string]interface{}{},
+		group: map[groupKey]map[string]interface{}{},
 	}
 }
 
@@ -57,7 +59,7 @@ func (s *store) row(key, column string, group int) (interface{}, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	groupKey := rowKey{groupType: key, groupID: group}
+	groupKey := groupKey{groupType: key, groupID: group}
 
 	// Check if we've scanned this row before.
 	row, ok := s.group[groupKey]
@@ -86,16 +88,14 @@ func (s *store) each(key, column string, group int) (interface{}, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	groupKey := rowKey{groupType: key, groupID: group}
+	groupKey := groupKey{groupType: key, groupID: group}
 
-	// Check if we've scanned this row before.
-	row, ok := s.group[groupKey]
-	if ok {
-		value, ok := row[column]
-		if !ok {
-			return nil, fmt.Errorf("data not found key=%q column=%q group=%d", key, column, group)
+	if s.firstColumn == "" {
+		s.firstColumn = column
+	} else {
+		if s.firstColumn == column {
+			s.eachRow++
 		}
-		return value, nil
 	}
 
 	// Get the next row from the referenced data set.
@@ -106,12 +106,6 @@ func (s *store) each(key, column string, group int) (interface{}, error) {
 	value, ok := rowRef[column]
 	if !ok {
 		return nil, fmt.Errorf("data not found key=%q column=%q", key, column)
-	}
-
-	// Increment the row if the group has changed.
-	if s.eachGroup != group {
-		s.eachRow++
-		s.eachGroup = group
 	}
 
 	return value, nil

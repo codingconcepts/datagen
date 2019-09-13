@@ -1,12 +1,24 @@
--- REPEAT 5
--- NAME owner
-insert into "table" ("c1", "c2") values
-{{range $i, $e := $.times_10 }}
+-- REPEAT 10
+-- NAME one
+insert into "one" (
+    "id",
+    "name") values
+{{range $i, $e := $.times_1 }}
 	{{if $i}},{{end}}
 	(
-		'{{stringf "%d %s" 1 10 5 5 "hijklmnop" }}'
+		{{int 1 10000}},
+		'{{string 5 20 "" ""}}'
+	)
+{{end}}
+returning "id";
+
+-- REPEAT 10
+-- NAME two
+insert into "two" (
+	"one_id") values
+{{range $i, $e := $.times_1 }}
+	{{if $i}},{{end}}
+	(
+		'{{each "one" "id" $i}}'
 	)
 {{end}};
-
--- EOF
-

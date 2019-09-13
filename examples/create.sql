@@ -16,3 +16,12 @@ CREATE TABLE sandbox.pet (
     CONSTRAINT "primary" PRIMARY KEY (pid ASC, id ASC),
     CONSTRAINT fk_pid_ref_owner FOREIGN KEY (pid) REFERENCES sandbox.owner (id)
 ) INTERLEAVE IN PARENT sandbox.owner (pid);
+
+CREATE TABLE sandbox.one (
+    id int primary key,
+    name STRING NOT NULL
+);
+
+CREATE TABLE sandbox.two (
+    one_id int
+);

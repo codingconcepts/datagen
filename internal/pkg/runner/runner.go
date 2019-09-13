@@ -99,7 +99,7 @@ func (r *Runner) Run(b parse.Block) error {
 
 func (r *Runner) ResetEach(name string) {
 	r.store.eachRow = 0
-	r.store.eachGroup = -1
+	r.store.currentGroup = 0
 	r.store.eachContext = name
 }
 
