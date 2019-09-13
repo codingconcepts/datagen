@@ -3,7 +3,7 @@
 insert into "one" (
     "id",
     "name") values
-{{range $i, $e := $.times_1_10 }}
+{{range $i, $e := ntimes 5 }}
 	{{if $i}},{{end}}
 	(
 		{{int 1 10000}},
@@ -11,3 +11,14 @@ insert into "one" (
 	)
 {{end}}
 returning "id";
+
+-- REPEAT 2
+-- NAME two
+insert into "two" (
+	"one_id") values
+{{range $i, $e := ntimes 5 }}
+	{{if $i}},{{end}}
+	(
+		'{{each "one" "id" $i}}'
+	)
+{{end}};

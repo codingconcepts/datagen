@@ -51,7 +51,24 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 | `-- NAME`     | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others. If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples). Only omit this for single-block configurations. |
 | `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script.                                                                                                                                                                                                                                  |
 
-#### Custom functions
+#### Helper functions
+
+##### ntimes
+
+Expresses the number of multi-row DML statements that will be generated:
+
+```
+{{range $i, $e := ntimes 1 10 }}
+	{{if $i}},{{end}}
+	(
+		...something
+	)
+{{end}}
+```
+
+`ntimes` the name of the function.<br/>
+`1` the minimum value.<br/>
+`10` _(optional)_ the maximum value. If omitted, the number will be exactly equal to the minimum value.<br/>
 
 ##### string
 
@@ -193,26 +210,6 @@ Works in a simliar way to `row` but references _sequential_ rows from a previous
 `owner` the name of the block whose data we're referencing.<br/>
 `id` the name of the owner column we'd like.<br/>
 `$i` the group identifier for this insert statement (ensures columns get taken from the same row).<br/>
-
-#### Helper functions
-
-##### times\_\*
-
-Time functions can be used to generate multi-line DML. The number after the underscore denotes the number of times something will be repeated.
-
-The possibilities are:
-
-* `.times_1` - Generate 1 multi-row statement.
-* `.times_10` - Generate 10 multi-row statement.
-* `.times_100` - Generate 100 multi-row statement.
-* `.times_1000` - Generate 1,000 multi-row statement.
-* `.times_10000` - Generate 10,000 multi-row statement.
-* `.times_100000` - Generate 100,000 multi-row statement.
-* `.times_1_10` - Generate between 1 and 10 multi-row statements.
-* `.times_10_100` - Generate between 10 and 100 multi-row statements.
-* `.times_100_1000` - Generate between 100 and 1,000 multi-row statements.
-* `.times_1000_10000` - Generate between 1,000 and 10,000 multi-row statements.
-* `.times_10000_100000` - Generate between 10,000 and 100,000 multi-row statements.
 
 ```
 {{range $i, $e := $.times_1}}
