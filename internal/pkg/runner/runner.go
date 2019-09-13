@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"reflect"
+	"strings"
 	"text/template"
 	"time"
 
@@ -26,6 +28,8 @@ type Runner struct {
 
 	dateFormat      string
 	stringFdefaults random.StringFDefaults
+
+	fsets map[string][]string
 }
 
 // New returns a pointer to a newly configured Runner.  Optionally
@@ -41,6 +45,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 			IntMinDefault:    10000,
 			IntMaxDefault:    99999,
 		},
+		fsets: map[string][]string{},
 	}
 
 	for _, opt := range opts {
@@ -55,6 +60,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"float":   random.Float,
 		"uuid":    func() string { return uuid.New().String() },
 		"set":     random.Set,
+		"fset":    r.loadAndSet,
 		"ref":     r.store.reference,
 		"row":     r.store.row,
 		"each":    r.store.each,
@@ -144,4 +150,22 @@ func (r *Runner) prepareValue(v reflect.Value) interface{} {
 	default:
 		return v
 	}
+}
+
+func (r *Runner) loadAndSet(path string) (string, error) {
+	set, ok := r.fsets[path]
+	if ok {
+		i := random.Int(0, int64(len(set)))
+		return set[i], nil
+	}
+
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		return "", errors.Wrap(err, "error reading file")
+	}
+
+	s := strings.Split(string(b), "\n")
+	r.fsets[path] = s
+
+	return s[random.Int(0, int64(len(s)))], nil
 }

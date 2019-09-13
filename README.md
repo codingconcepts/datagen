@@ -232,6 +232,17 @@ Selects a random string from a set of possible options.
 `set` the name of the function.<br/>
 `"alice"`|`"bob"` etc. the available options to generate from.<br/>
 
+##### fset
+
+Selects a random value from a set of possible options contained within a file.
+
+```
+'{{fset "./examples/types.txt"}}'
+```
+
+`fset` the name of the function.<br/>
+`"./examples/types.txt"` the path to the file containing the options.<br/>
+
 ##### ref
 
 References a random value from a previous block's returned values (cached in memory). For example, if you have two blocks, one named "owner" and another named "pet" and you insert a number of owners into the database, returning their IDs, then wish to assign pets to them, you can use the following syntax (assuming you've provided the value "owner" for the first block's `-- NAME` comment):
@@ -300,6 +311,10 @@ insert into `pet` (`pid`, `name`) values
 ```
 
 ## Todos
+
+* Ability for users to base `set` commands from flat files.
+
+* Ability to use weighted averages for `set`.
 
 * Ability to generate specific types of data (first name / last name etc).
 

@@ -21,7 +21,3 @@ CREATE TABLE sandbox.one (
     id int primary key,
     name STRING NOT NULL
 );
-
-CREATE TABLE sandbox.two (
-    one_id int
-);
