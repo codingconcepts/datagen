@@ -14,6 +14,7 @@ returning "id";
 
 -- REPEAT 2
 -- NAME two
+-- DESCRIPTION Simulate XYZ.
 insert into "two" (
 	"one_id") values
 {{range $i, $e := ntimes 5 }}

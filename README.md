@@ -26,30 +26,31 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 
 `datagen` accepts the following arguments:
 
-| Flag       | Description                                                                                                                    |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `-conn`    | The full database connection string (enclosed in quotes)                                                                       |
-| `-driver`  | The name of the database driver to use [postgres, mysql]                                                                       |
-| `-script`  | The full path to the script file to use (enclosed in quotes)                                                                   |
+| Flag       | Description |
+| ---------- | ----------- |
+| `-conn`    | The full database connection string (enclosed in quotes) |
+| `-driver`  | The name of the database driver to use [postgres, mysql] |
+| `-script`  | The full path to the script file to use (enclosed in quotes) |
 | `-datefmt` | _(optional)_ `time.Time` format string that determines the format of all database and template dates. Defaults to "2006-01-02" |
-| `-debug`   | _(optional)_ If set, the SQL generated will be written to stout. Note that `ref`, `row`, and `each` won't work.                |
+| `-debug`   | _(optional)_ If set, the SQL generated will be written to stout. Note that `ref`, `row`, and `each` won't work. |
 
 ## Concepts
 
-| Object | Description                                                                                          |
-| ------ | ---------------------------------------------------------------------------------------------------- |
+| Object | Description |
+| ------ | ---------- |
 | Block  | A block of text within a configuration file that performs a series of operations against a database. |
-| Script | A script is a text file that contains a number of blocks.                                            |
+| Script | A script is a text file that contains a number of blocks. |
 
 ### Comments
 
 `datagen` uses Go's [text/template](https://golang.org/pkg/text/template/) engine where possible but where it's not possible to use that, it parses and makes use of comments. The following comments provide instructions to `datagen` during block parsing.
 
-| Comment       | Description                                                                                                                                                                                                                                                                                                                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Comment       | Description |
+| ------------- | ----------- |
 | `-- REPEAT N` | Repeat the block that directly follows the comment N times. If this comment isn't provided, a block will be executed once. Consider this when using the `ntimes` function to insert a large amount of data. For example `-- REPEAT 100` when used in conjunction with `ntimes 1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.               |
 | `-- NAME`     | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others. If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples). Only omit this for single-block configurations. |
-| `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script.                                                                                                                                                                                                                                  |
+| `-- DESCRIPTION`     | Provides a description to the block. |
+| `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script. |
 
 #### Helper functions
 
