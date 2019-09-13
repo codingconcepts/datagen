@@ -61,12 +61,17 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	}
 
 	r.helpers = map[string]interface{}{
-		"times_1":      make([]struct{}, 1),
-		"times_10":     make([]struct{}, 10),
-		"times_100":    make([]struct{}, 100),
-		"times_1000":   make([]struct{}, 1000),
-		"times_10000":  make([]struct{}, 10000),
-		"times_100000": make([]struct{}, 100000),
+		"times_1":            make([]struct{}, 1),
+		"times_10":           make([]struct{}, 10),
+		"times_100":          make([]struct{}, 100),
+		"times_1000":         make([]struct{}, 1000),
+		"times_10000":        make([]struct{}, 10000),
+		"times_100000":       make([]struct{}, 100000),
+		"times_1_10":         make([]struct{}, random.Int(1, 10)),
+		"times_10_100":       make([]struct{}, random.Int(10, 100)),
+		"times_100_1000":     make([]struct{}, random.Int(100, 1000)),
+		"times_1000_10000":   make([]struct{}, random.Int(1000, 10000)),
+		"times_10000_100000": make([]struct{}, random.Int(10000, 100000)),
 	}
 
 	return &r

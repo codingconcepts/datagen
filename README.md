@@ -198,7 +198,21 @@ Works in a simliar way to `row` but references _sequential_ rows from a previous
 
 ##### times\_\*
 
-Time functions can be used to generate multi-line DML. The number after the underscore denotes the number of times something will be repeated. Possible numbers are 1, 10, 100, 1000, 10000, and 100000.
+Time functions can be used to generate multi-line DML. The number after the underscore denotes the number of times something will be repeated.
+
+The possibilities are:
+
+* `.times_1` - Generate 1 multi-row statement.
+* `.times_10` - Generate 10 multi-row statement.
+* `.times_100` - Generate 100 multi-row statement.
+* `.times_1000` - Generate 1,000 multi-row statement.
+* `.times_10000` - Generate 10,000 multi-row statement.
+* `.times_100000` - Generate 100,000 multi-row statement.
+* `.times_1_10` - Generate between 1 and 10 multi-row statements.
+* `.times_10_100` - Generate between 10 and 100 multi-row statements.
+* `.times_100_1000` - Generate between 100 and 1,000 multi-row statements.
+* `.times_1000_10000` - Generate between 1,000 and 10,000 multi-row statements.
+* `.times_10000_100000` - Generate between 10,000 and 100,000 multi-row statements.
 
 ```
 {{range $i, $e := $.times_1}}

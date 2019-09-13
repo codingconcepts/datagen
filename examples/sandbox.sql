@@ -1,9 +1,9 @@
--- REPEAT 10
+-- REPEAT 1
 -- NAME one
 insert into "one" (
     "id",
     "name") values
-{{range $i, $e := $.times_1 }}
+{{range $i, $e := $.times_1_10 }}
 	{{if $i}},{{end}}
 	(
 		{{int 1 10000}},
@@ -11,14 +11,3 @@ insert into "one" (
 	)
 {{end}}
 returning "id";
-
--- REPEAT 10
--- NAME two
-insert into "two" (
-	"one_id") values
-{{range $i, $e := $.times_1 }}
-	{{if $i}},{{end}}
-	(
-		'{{each "one" "id" $i}}'
-	)
-{{end}};
