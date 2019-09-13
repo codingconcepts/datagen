@@ -47,7 +47,7 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 
 | Comment       | Description                                                                                                                                                                                                                                                                                                                                                                                    |
 | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `-- REPEAT N` | Repeat the block that directly follows the comment N times. If this comment isn't provided, a block will be executed once. Consider this when using the `.times_*` helpers to insert a large amount of data. For example `-- REPEAT 100` when used in conjunction with `.times_1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.               |
+| `-- REPEAT N` | Repeat the block that directly follows the comment N times. If this comment isn't provided, a block will be executed once. Consider this when using the `ntimes` function to insert a large amount of data. For example `-- REPEAT 100` when used in conjunction with `ntimes 1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.               |
 | `-- NAME`     | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others. If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples). Only omit this for single-block configurations. |
 | `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script.                                                                                                                                                                                                                                  |
 
@@ -199,7 +199,7 @@ References a random row from a previous block's returned values and caches it so
 
 ##### each
 
-Works in a simliar way to `row` but references _sequential_ rows from a previous block's returned values, allowing all of a previous block's rows to have associated rows in a related table, provided the product of `--REPEAT` and `.times_*` is the same as the previous block's.
+Works in a simliar way to `row` but references _sequential_ rows from a previous block's returned values, allowing all of a previous block's rows to have associated rows in a related table, provided the product of `--REPEAT` and `ntimes` is the same as the previous block's.
 
 ```
 '{{each "owner" "id" $i "pet"}}',
@@ -212,7 +212,7 @@ Works in a simliar way to `row` but references _sequential_ rows from a previous
 `$i` the group identifier for this insert statement (ensures columns get taken from the same row).<br/>
 
 ```
-{{range $i, $e := $.times_1}}
+{{range $i, $e := ntimes 1}}
 	...something
 {{end}}
 ```
@@ -231,7 +231,7 @@ With MySQL's lack of a `returning` clause, we instead select a random record fro
 -- REPEAT 10
 -- NAME pet
 insert into `pet` (`pid`, `name`) values
-{{range $i, $e := .times_100 }}
+{{range $i, $e := ntimes 100 }}
 	{{if $i}},{{end}}
 	(
 		(select `id` from `person` order by rand() limit 1),

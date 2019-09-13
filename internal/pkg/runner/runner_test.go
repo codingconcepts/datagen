@@ -31,7 +31,7 @@ func TestRun(t *testing.T) {
 			b: parse.Block{
 				Repeat: 1,
 				Name:   "owner",
-				Body:   `{{range $i, $e := $.times_1000 }}`,
+				Body:   `{{range $i, $e := ntimes 10 }}`,
 			},
 			expError: true,
 		},
