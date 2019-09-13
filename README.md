@@ -32,6 +32,7 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 | `-driver`  | The name of the database driver to use [postgres, mysql]                                                                       |
 | `-script`  | The full path to the script file to use (enclosed in quotes)                                                                   |
 | `-datefmt` | _(optional)_ `time.Time` format string that determines the format of all database and template dates. Defaults to "2006-01-02" |
+| `-debug`   | _(optional)_ If set, the SQL generated will be written to stout. Note that `ref`, `row`, and `each` won't work.                |
 
 ## Concepts
 

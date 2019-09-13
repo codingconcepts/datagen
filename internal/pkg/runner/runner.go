@@ -3,6 +3,7 @@ package runner
 import (
 	"bytes"
 	"database/sql"
+	"fmt"
 	"reflect"
 	"text/template"
 	"time"
@@ -21,6 +22,7 @@ type Runner struct {
 	funcs   template.FuncMap
 	helpers map[string]interface{}
 	store   *store
+	debug   bool
 
 	dateFormat      string
 	stringFdefaults random.StringFDefaults
@@ -32,6 +34,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	r := Runner{
 		db:    db,
 		store: newStore(),
+		debug: false,
 		stringFdefaults: random.StringFDefaults{
 			StringMinDefault: 10,
 			StringMaxDefault: 10,
@@ -79,6 +82,11 @@ func (r *Runner) Run(b parse.Block) error {
 	buf := &bytes.Buffer{}
 	if err := tmpl.Execute(buf, r.helpers); err != nil {
 		return errors.Wrap(err, "executing template")
+	}
+
+	if r.debug {
+		fmt.Println(buf.String())
+		return nil
 	}
 
 	rows, err := r.db.Query(buf.String())

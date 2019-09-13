@@ -24,6 +24,7 @@ func main() {
 	script := flag.String("script", "", "the full or relative path to your script file")
 	conn := flag.String("conn", "", "the database connection string")
 	dateFmt := flag.String("datefmt", "2006-01-02", "the Go date format for all database dates")
+	debug := flag.Bool("debug", false, "dry run without writing to database, ref, row, and each won't work")
 	flag.Parse()
 
 	if *script == "" || *driver == "" || *conn == "" {
@@ -34,7 +35,7 @@ func main() {
 	db := mustConnect(*driver, *conn)
 	defer db.Close()
 
-	runner := runner.New(db, runner.WithDateFormat(*dateFmt))
+	runner := runner.New(db, runner.WithDateFormat(*dateFmt), runner.WithDebug(*debug))
 
 	file, err := os.Open(*script)
 	if err != nil {

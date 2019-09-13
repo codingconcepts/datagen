@@ -19,3 +19,11 @@ func WithStringFDefaults(d random.StringFDefaults) Option {
 		r.stringFdefaults = d
 	}
 }
+
+// WithDebug puts the Runner in debug mode, meaning nothing will be
+// written to a database.
+func WithDebug(d bool) Option {
+	return func(r *Runner) {
+		r.debug = d
+	}
+}
