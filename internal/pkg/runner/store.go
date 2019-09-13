@@ -98,12 +98,12 @@ func (s *store) each(key, column string, group int) (interface{}, error) {
 		return value, nil
 	}
 
-	// Get a random item from the row context and cache it for the next read.
-	randomValue := s.data[key][s.eachRow]
+	// Get the next row from the referenced data set.
+	rowRef := s.data[key][s.eachRow]
 
-	s.group[groupKey] = randomValue
+	s.group[groupKey] = rowRef
 
-	value, ok := randomValue[column]
+	value, ok := rowRef[column]
 	if !ok {
 		return nil, fmt.Errorf("data not found key=%q column=%q", key, column)
 	}
