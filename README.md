@@ -70,6 +70,65 @@ Expresses the number of multi-row DML statements that will be generated:
 `1` the minimum value.<br/>
 `10` _(optional)_ the maximum value. If omitted, the number will be exactly equal to the minimum value.<br/>
 
+The following script generates 5 entries into the `one` table and between 5 and 10 entries into the `two` table as a result of the combination of the `-- REPEAT` and `ntimes` configured:
+
+```
+-- REPEAT 1
+-- NAME one
+insert into "one" (
+    "id",
+    "name") values
+{{range $i, $e := ntimes 5 }}
+	{{if $i}},{{end}}
+	(
+		{{int 1 10000}},
+		'{{string 5 20 "" ""}}'
+	)
+{{end}}
+returning "id";
+
+-- REPEAT 1
+-- NAME two
+insert into "two" (
+	"one_id") values
+{{range $i, $e := ntimes 5 10 }}
+	{{if $i}},{{end}}
+	(
+		'{{each "one" "id" $i}}'
+	)
+{{end}};
+```
+
+The `ntimes` and `REPEAT` values for table one's insert totalled 5, so you'll see 5 rows in table one:
+
+| id |
+| -- |
+| 1977 |
+| 2875 |
+| 6518 |
+| 6877 |
+| 9425 |
+
+The `ntimes` and `REPEAT` values for table two's insert totalled 7 (`ntimes` generated 7 and we `REPEATE` once):
+
+| one_id | count |
+| ------ | ----- |
+| 1977 | 2 |
+| 2875 | 1 |
+| 6518 | 2 |
+| 6877 | 1 |
+| 9425 | 1 |
+
+By increasing the `REPEAT` value to 2, we'll generate a total of 14 (`ntimes` is 7 multiplied by two this time):
+
+| one_id | count |
+| ------ | ----- |
+| 1977 | 3 |
+| 2875 | 2 |
+| 6518 | 3 |
+| 6877 | 3 |
+| 9425 | 3 |
+
 ##### string
 
 Generates a random string between a given minimum and maximum length with an optional prefix:

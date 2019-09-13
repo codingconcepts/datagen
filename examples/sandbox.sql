@@ -14,10 +14,9 @@ returning "id";
 
 -- REPEAT 2
 -- NAME two
--- Simulate XYZ.
 insert into "two" (
 	"one_id") values
-{{range $i, $e := ntimes 5 }}
+{{range $i, $e := ntimes 1 10 }}
 	{{if $i}},{{end}}
 	(
 		'{{each "one" "id" $i}}'
