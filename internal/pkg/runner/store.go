@@ -98,8 +98,9 @@ func (s *store) each(key, column string, group int) (interface{}, error) {
 		}
 	}
 
-	// Get the next row from the referenced data set.
-	rowRef := s.data[key][s.eachRow]
+	// Get the next row from the referenced data set, returning to row 0 if we're generating
+	// more child records than parents.
+	rowRef := s.data[key][s.eachRow%len(s.data[key])]
 
 	s.group[groupKey] = rowRef
 
