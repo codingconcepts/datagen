@@ -10,10 +10,10 @@ import (
 )
 
 const (
-	commentEOF         = "-- EOF"
-	commentRepeat      = "-- REPEAT"
-	commentName        = "-- NAME"
-	commentDescription = "-- DESCRIPTION"
+	commentEOF    = "-- EOF"
+	commentRepeat = "-- REPEAT"
+	commentName   = "-- NAME"
+	comment       = "-- "
 )
 
 // Block represents an instruction block in a script file.
@@ -24,9 +24,6 @@ type Block struct {
 	// The name of the block can be used to identify the return values
 	// from one block execution from another.
 	Name string
-
-	// A string that describes the block.
-	Description string
 
 	// The body of the template.
 	Body string
@@ -64,11 +61,6 @@ func parseBlock(scanner *bufio.Scanner) (ok bool, block Block, err error) {
 			continue
 		}
 
-		if strings.HasPrefix(t, commentDescription) {
-			block.Description = parseDescription(t)
-			continue
-		}
-
 		if strings.HasPrefix(t, commentRepeat) {
 			var err error
 			if block.Repeat, err = parseRepeat(t); err != nil {
@@ -91,6 +83,11 @@ func parseBlock(scanner *bufio.Scanner) (ok bool, block Block, err error) {
 			return false, block, nil
 		}
 
+		// Catch all for all other types of comments.
+		if strings.HasPrefix(t, comment) {
+			continue
+		}
+
 		b.WriteString(t)
 	}
 
@@ -105,8 +102,4 @@ func parseRepeat(input string) (int, error) {
 
 func parseName(input string) string {
 	return strings.Trim(strings.TrimPrefix(input, commentName), " \t")
-}
-
-func parseDescription(input string) string {
-	return strings.Trim(strings.TrimPrefix(input, commentDescription), " \t")
 }

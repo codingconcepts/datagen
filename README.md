@@ -49,7 +49,6 @@ datagen -script script.sql --driver postgres --conn postgres://root@localhost:26
 | ------------- | ----------- |
 | `-- REPEAT N` | Repeat the block that directly follows the comment N times. If this comment isn't provided, a block will be executed once. Consider this when using the `ntimes` function to insert a large amount of data. For example `-- REPEAT 100` when used in conjunction with `ntimes 1000` will result in 100,0000 rows being inserted using multi-row DML syntax as per the examples.               |
 | `-- NAME`     | Assigns a given name to the block that directly follows the comment, allowing specific rows from blocks to be referenced and not muddled with others. If this comment isn't provided, no distinction will be made between same-name columns from different tables, so issues will likely arise (e.g. `owner.id` and `pet.id` in the examples). Only omit this for single-block configurations. |
-| `-- DESCRIPTION`     | Provides a description to the block. |
 | `-- EOF`      | Causing block parsing to stop, essentially simulating the natural end-of-file. If this comment isn't provided, the parse will parse all blocks in the script. |
 
 #### Helper functions
