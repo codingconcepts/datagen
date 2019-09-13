@@ -455,10 +455,10 @@ func BenchmarkFloat(b *testing.B) {
 func TestSet(t *testing.T) {
 	cases := []struct {
 		name string
-		set  []string
+		set  []interface{}
 	}{
-		{name: "one item", set: []string{"a"}},
-		{name: "multiple items", set: []string{"a", "b"}},
+		{name: "one item", set: []interface{}{"a"}},
+		{name: "multiple items", set: []interface{}{"a", "b"}},
 	}
 
 	for _, c := range cases {
@@ -471,10 +471,10 @@ func TestSet(t *testing.T) {
 func BenchmarkSet(b *testing.B) {
 	cases := []struct {
 		name  string
-		items []string
+		items []interface{}
 	}{
-		{name: "one item", items: []string{"a"}},
-		{name: "multiple items", items: []string{"a", "b", "c"}},
+		{name: "one item", items: []interface{}{"a"}},
+		{name: "multiple items", items: []interface{}{"a", "b", "c"}},
 	}
 
 	for _, c := range cases {

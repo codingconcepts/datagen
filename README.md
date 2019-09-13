@@ -223,10 +223,10 @@ Generates a random V4 UUID using Google's [uuid](github.com/google/uuid) package
 
 ##### set
 
-Selects a random string from a set of possible values.
+Selects a random value from a set of possible values.
 
 ```
-'{{set "alice" "bob" "carol"}}'
+'{{set "alice" 1 2.3"}}'
 ```
 
 `set` the name of the function.<br/>
@@ -252,7 +252,7 @@ Weights can be any number.
 
 ##### fset
 
-Selects a random value from a set of possible options contained within a file.
+Selects a random value from a set of possible values contained within a file.
 
 ```
 '{{fset "./examples/types.txt"}}'

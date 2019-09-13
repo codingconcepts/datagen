@@ -176,7 +176,7 @@ func Float(min, max float64) float64 {
 }
 
 // Set returns a random item from a set
-func Set(set ...string) string {
+func Set(set ...interface{}) interface{} {
 	i := between64(0, int64(len(set)))
 	return set[i]
 }
