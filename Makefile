@@ -1,11 +1,11 @@
 .PHONY: test
 
+cockroachdb:
+	docker run -d -p 26257:26257 -p 8080:8080 cockroachdb/cockroach:v2.1.6 start --insecure
+
 example:
 	go run main.go -script ./examples/script.sql --driver postgres --conn postgres://root@localhost:26257/sandbox?sslmode=disable
-
-debug:
-	go run main.go -debug -script ./examples/sandbox.sql --driver postgres --conn postgres://root@localhost:26257/sandbox?sslmode=disable
-
+	
 test:
 	go test ./... -v ;\
 	go test ./... -cover
