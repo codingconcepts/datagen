@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -16,6 +17,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var semver string
+
 func main() {
 	rand.Seed(time.Now().UnixNano())
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
@@ -25,7 +28,13 @@ func main() {
 	conn := flag.String("conn", "", "the database connection string")
 	dateFmt := flag.String("datefmt", "2006-01-02", "the Go date format for all database dates")
 	debug := flag.Bool("debug", false, "dry run without writing to database, ref, row, and each won't work")
+	version := flag.Bool("version", false, "display the current version number")
 	flag.Parse()
+
+	if *version {
+		fmt.Println(semver)
+		os.Exit(2)
+	}
 
 	if *script == "" || *driver == "" || *conn == "" {
 		flag.Usage()

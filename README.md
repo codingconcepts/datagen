@@ -12,9 +12,21 @@ If you need to generate a lot of random data for your database tables but don't 
 
 ## Installation
 
+To build from source, either clone the repo, or use `go get` as follows (datagen will automatically be built by Go):
+
 ```bash
-go get -u github.com/codingconcepts/datagen
+$ go get -u github.com/codingconcepts/datagen
 ```
+
+## Building
+
+To build a version of datagen for Linux, MacOS, and Windows, call the `build` Makefile target with a version argument as follows:
+
+```
+$ make build VERSION=1.0.0-beta
+```
+
+If you'd prefer to download a binary, the releases page has all built version and can be found [here](https://github.com/codingconcepts/datagen/releases).
 
 ## Usage
 
