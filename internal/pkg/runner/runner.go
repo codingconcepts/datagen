@@ -84,7 +84,7 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"state":    func() string { return randomdata.State(randomdata.Large) },
 		"state2":   func() string { return randomdata.State(randomdata.Small) },
 		"currency": randomdata.Currency,
-		"locale":   randomdata.Locale, // BCP 47
+		"locale":   randomdata.Locale,
 		"country":  func() string { return randomdata.Country(randomdata.FullCountry) },
 		"country2": func() string { return randomdata.Country(randomdata.TwoCharCountry) },   // ISO 3166-1 alpha-2
 		"country3": func() string { return randomdata.Country(randomdata.ThreeCharCountry) }, // ISO 3166-1 alpha-3

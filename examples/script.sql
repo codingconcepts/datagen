@@ -4,7 +4,7 @@ insert into "owner" ("email", "date_of_birth") values
 {{range $i, $e := ntimes 5 }}
 	{{if $i}},{{end}}
 	(
-		'{{stringf "%s.%s@acme.co.uk" 5 5 "abcdefg" 5 5 "hijklmnop" }}',
+		'{{email}}',
 		'{{date "1900-01-01" "now" ""}}'
 	)
 {{end}}

@@ -100,7 +100,7 @@ insert into "one" (
 	{{if $i}},{{end}}
 	(
 		{{int 1 10000}},
-		'{{string 5 20 "" ""}}'
+		'{{name}}'
 	)
 {{end}}
 returning "id";
@@ -437,7 +437,7 @@ Generates a random currency in ISO 4217 format.
 
 ##### locale
 
-Generates a random locale.
+Generates a random locale in BCP 47 format.
 
 ```
 {{locale}}
