@@ -121,6 +121,8 @@ func (r *Runner) Run(b parse.Block) error {
 	return r.scan(b, rows)
 }
 
+// ResetEach resets the variables used for keeping track of sequential row
+// references of previous block results.
 func (r *Runner) ResetEach(name string) {
 	r.store.eachRow = 0
 	r.store.currentGroup = 0
