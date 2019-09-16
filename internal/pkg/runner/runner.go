@@ -16,6 +16,8 @@ import (
 
 	"github.com/codingconcepts/datagen/internal/pkg/parse"
 	"github.com/pkg/errors"
+
+	"github.com/Pallinder/go-randomdata"
 )
 
 // Runner holds the configuration that will be used at runtime.
@@ -55,25 +57,40 @@ func New(db *sql.DB, opts ...Option) *Runner {
 	}
 
 	r.funcs = template.FuncMap{
-		"string":  random.String,
-		"stringf": random.StringF(r.stringFdefaults),
-		"int":     random.Int,
-		"date":    random.Date(r.dateFormat),
-		"float":   random.Float,
-		"uuid":    func() string { return uuid.New().String() },
-		"set":     random.Set,
-		"wset":    r.wset,
-		"fset":    r.loadAndSet,
-		"ref":     r.store.reference,
-		"row":     r.store.row,
-		"each":    r.store.each,
-		"ntimes": func(min int64, extra ...int64) []struct{} {
-			max := min
-			if len(extra) > 0 {
-				max = extra[0]
-			}
-			return make([]struct{}, random.Int(min, max))
-		},
+		"string":   random.String,
+		"stringf":  random.StringF(r.stringFdefaults),
+		"int":      random.Int,
+		"date":     random.Date(r.dateFormat),
+		"float":    random.Float,
+		"ntimes":   random.NTimes,
+		"set":      random.Set,
+		"uuid":     func() string { return uuid.New().String() },
+		"wset":     r.wset,
+		"fset":     r.loadAndSet,
+		"ref":      r.store.reference,
+		"row":      r.store.row,
+		"each":     r.store.each,
+		"title":    func() string { return randomdata.Title(randomdata.RandomGender) },
+		"namef":    func() string { return randomdata.FirstName(randomdata.RandomGender) },
+		"namel":    randomdata.LastName,
+		"name":     func() string { return randomdata.FullName(randomdata.RandomGender) },
+		"email":    randomdata.Email,
+		"phone":    randomdata.PhoneNumber,
+		"postcode": randomdata.PostalCode,
+		"address":  randomdata.Address,
+		"street":   randomdata.StreetForCountry,
+		"city":     randomdata.City,
+		"county":   randomdata.ProvinceForCountry,
+		"state":    func() string { return randomdata.State(randomdata.Large) },
+		"state2":   func() string { return randomdata.State(randomdata.Small) },
+		"currency": randomdata.Currency,
+		"locale":   randomdata.Locale, // BCP 47
+		"country":  func() string { return randomdata.Country(randomdata.FullCountry) },
+		"country2": func() string { return randomdata.Country(randomdata.TwoCharCountry) },   // ISO 3166-1 alpha-2
+		"country3": func() string { return randomdata.Country(randomdata.ThreeCharCountry) }, // ISO 3166-1 alpha-3
+		"ip4":      randomdata.IpV4Address,
+		"ip6":      randomdata.IpV6Address,
+		"agent":    randomdata.UserAgentString,
 	}
 
 	return &r

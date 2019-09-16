@@ -181,6 +181,17 @@ func Set(set ...interface{}) interface{} {
 	return set[i]
 }
 
+// NTimes returns a slice of empty structs of random length. If you know
+// the size of the slice you'd like, just pass the min argument, if you'd
+// like a slice between a minimum and maximum size, pass a value for extra.
+func NTimes(min int64, extra ...int64) []struct{} {
+	max := min
+	if len(extra) > 0 {
+		max = extra[0]
+	}
+	return make([]struct{}, Int(min, max))
+}
+
 func between64(min, max int64) int64 {
 	if min == max {
 		return min

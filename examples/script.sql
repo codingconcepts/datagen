@@ -17,7 +17,7 @@ insert into "pet" ("pid", "name", "type") values
 	{{if $i}},{{end}}
 	(
 		'{{ref "owner" "id"}}',
-		'{{string 10 10 "p-" "abcde"}}',
+		'{{name}}',
 		'{{wset "dog" 60 "cat" 40}}'
 	)
 {{end}};

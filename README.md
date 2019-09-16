@@ -10,6 +10,12 @@ If you need to generate a lot of random data for your database tables but don't 
 
 > "right now datagen and [modelgen](https://github.com/LUSHDigital/modelgen) are god sends to me"
 
+## Credit
+
+* [go-randomdata](https://github.com/Pallinder/go-randomdata) for the following generators:
+
+title, namef, namel, name, email, phone, postcode, address, street, city, county, state, currency, locale, country, country2, country3, ip4, ip6, and user-agent.
+
 ## Installation
 
 To build from source, either clone the repo, or use `go get` as follows (datagen will automatically be built by Go):
@@ -315,6 +321,174 @@ Works in a simliar way to `row` but references _sequential_ rows from a previous
 {{range $i, $e := ntimes 1}}
 	...something
 {{end}}
+```
+
+##### title
+
+Generates a random title for a random gender.
+
+```
+{{title}}
+```
+
+##### namef
+
+Generates a random first name for a random gender.
+
+```
+{{namef}}
+```
+
+##### namel
+
+Generates a random last name.
+
+```
+{{namel}}
+```
+
+##### name
+
+Generates a random full name for a random gender.
+
+```
+{{name}}
+```
+
+##### email
+
+Generates a random email address.
+
+```
+{{email}}
+```
+
+##### phone
+
+Generates a random phone number in E164 format.
+
+```
+{{phone}}
+```
+
+##### postcode
+
+Generates a random postcode, taking a 2-letter country code.
+
+```
+{{postcode "GB"}}
+```
+
+##### address
+
+Generates a random American address. It's possible to create addresses for other countries using the various other functions available.
+
+```
+{{address}}
+```
+
+##### street
+
+Generates a random street name, taking a 2-letter country code.
+
+```
+{{street "GB"}}
+```
+
+##### city
+
+Generates a random American city name.
+
+```
+{{city}}
+```
+
+##### county
+
+Generates a random county/state name, taking a 2-letter country code. To generate a random state name without having to pass "US" as an argument, use the `state` function.
+
+```
+{{county "GB"}}
+```
+
+##### state
+
+Generates a random American state name.
+
+```
+{{state}}
+```
+
+##### state2
+
+Generates a random American state name in its 2-letter format.
+
+```
+{{state2}}
+```
+
+##### currency
+
+Generates a random currency in ISO 4217 format.
+
+```
+{{currency}}
+```
+
+##### locale
+
+Generates a random locale.
+
+```
+{{locale}}
+```
+
+##### country
+
+Generates a random country name.
+
+```
+{{country}}
+```
+
+##### country2
+
+Generates a random country name in ISO 3166-1 alpha-2 format.
+
+```
+{{country2}}
+```
+
+##### country3
+
+Generates a random country name in ISO 3166-1 alpha-3 format.
+
+```
+{{country3}}
+```
+
+##### ip4
+
+Generates a random v4 IP address.
+
+```
+{{ip4}}
+```
+
+##### ip6
+
+Generates a random v6 IP address.
+
+```
+{{ip5}}
+```
+
+##### user-agent
+
+Generates a random user agent to simulate an API client.
+
+```
+{{agent}}
 ```
 
 ## Other database types:

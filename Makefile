@@ -20,7 +20,7 @@ cover:
 	github.com/codingconcepts/datagen/internal/pkg/runner;\
 	go tool cover -html=coverage.out
 
-build:
+release:
 	# linux
 	GOOS=linux go build -ldflags "-X main.semver=${VERSION}" -o datagen ;\
 	tar -zcvf datagen_${VERSION}_linux.tar.gz ./datagen ;\
