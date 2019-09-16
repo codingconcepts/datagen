@@ -51,7 +51,10 @@ func StringF(d StringFDefaults) func(format string, args ...interface{}) (string
 
 		verbs := verbPattern.FindAllString(format, -1)
 
-		min, max, pattern, argIndex := int64(0), int64(0), "", 0
+		var min int64
+		var max int64
+		var pattern string
+		var argIndex int
 		var err error
 
 		for _, v := range verbs {
