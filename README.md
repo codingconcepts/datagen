@@ -516,8 +516,6 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Ability to generate specific types of data (first name / last name etc).
-
 * Better handling of connection issues during run.
 
 * Integration tests.
