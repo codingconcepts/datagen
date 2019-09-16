@@ -162,7 +162,7 @@ Note that the apostrophes will wrap the string, turning it into a database strin
 Generates a formatted string using placeholder syntax:
 
 ```
-'{{stringf "%s.%d@acme.com" 5 10 "abc" 10000 20000}}',
+'{{stringf "%s.%d@acme.com" 5 10 "abc" 10000 20000}}'
 ```
 
 `stringf` the name of the function.<br/>
@@ -264,7 +264,7 @@ Weights can be any number.
 
 ##### fset
 
-Selects a random value from a set of possible values contained within a file.
+Selects a random value from a set of possible values contained within a file and caches the enumeration so it's not reloaded from disk on every invocation.
 
 ```
 '{{fset "./examples/types.txt"}}'

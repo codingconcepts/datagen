@@ -16,8 +16,8 @@ insert into "pet" ("pid", "name", "type") values
 {{range $i, $e := ntimes 5 }}
 	{{if $i}},{{end}}
 	(
-		'{{each "owner" "id" $i}}',
+		'{{ref "owner" "id"}}',
 		'{{string 10 10 "p-" "abcde"}}',
-		'{{fset "./examples/types.txt"}}'
+		'{{wset "dog" 60 "cat" 40}}'
 	)
 {{end}};
