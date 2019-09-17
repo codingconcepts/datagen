@@ -22,11 +22,12 @@ import (
 
 // Runner holds the configuration that will be used at runtime.
 type Runner struct {
-	db      *sql.DB
-	funcs   template.FuncMap
-	helpers map[string]interface{}
-	store   *store
-	debug   bool
+	db           *sql.DB
+	funcs        template.FuncMap
+	helpers      map[string]interface{}
+	store        *store
+	debug        bool
+	queryErrFile string
 
 	dateFormat      string
 	stringFdefaults random.StringFDefaults
@@ -39,9 +40,10 @@ type Runner struct {
 // taking a variable number of configuration options.
 func New(db *sql.DB, opts ...Option) *Runner {
 	r := Runner{
-		db:    db,
-		store: newStore(),
-		debug: false,
+		db:           db,
+		store:        newStore(),
+		debug:        false,
+		queryErrFile: "query_err.sql",
 		stringFdefaults: random.StringFDefaults{
 			StringMinDefault: 10,
 			StringMaxDefault: 10,
@@ -115,6 +117,7 @@ func (r *Runner) Run(b parse.Block) error {
 
 	rows, err := r.db.Query(buf.String())
 	if err != nil {
+		r.mustDumpQuery(buf.Bytes())
 		return errors.Wrap(err, "executing query")
 	}
 
@@ -186,9 +189,11 @@ func (r *Runner) loadAndSet(path string) (string, error) {
 		return "", errors.Wrap(err, "error reading file")
 	}
 
-	s := strings.Split(string(b), "\n")
-	r.fsets[path] = s
+	strFile := string(b)
+	strFile = strings.Replace(strFile, "'", "''", -1)
+	s := strings.Split(strFile, "\n")
 
+	r.fsets[path] = s
 	return s[random.Int(0, int64(len(s)))], nil
 }
 

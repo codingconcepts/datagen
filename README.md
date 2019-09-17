@@ -518,6 +518,8 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
+* Consider using ($1, $2) with arguments.
+
 * Refactor `runner.ResetEach` and remove that state.
 
 * Better handling of connection issues during run.
