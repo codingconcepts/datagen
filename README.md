@@ -325,6 +325,22 @@ Works in a simliar way to `row` but references _sequential_ rows from a previous
 {{end}}
 ```
 
+##### adj
+
+Generates a random adjective.
+
+```
+{{adj}}
+```
+
+##### noun
+
+Generates a random noun.
+
+```
+{{noun}}
+```
+
 ##### title
 
 Generates a random title for a random gender.
@@ -518,7 +534,9 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
-* Consider using ($1, $2) with arguments.
+* Allow generated columns to be referenced by rows in the same insert.
+
+* Consider using ($1, $2) with arguments
 
 * Refactor `runner.ResetEach` and remove that state.
 

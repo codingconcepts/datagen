@@ -34,6 +34,9 @@ type Runner struct {
 
 	fsets map[string][]string
 	wsets map[string]random.WeightedItems
+
+	adjectives []string
+	nouns      []string
 }
 
 // New returns a pointer to a newly configured Runner.  Optionally
@@ -50,8 +53,10 @@ func New(db *sql.DB, opts ...Option) *Runner {
 			IntMinDefault:    10000,
 			IntMaxDefault:    99999,
 		},
-		fsets: map[string][]string{},
-		wsets: map[string]random.WeightedItems{},
+		fsets:      map[string][]string{},
+		wsets:      map[string]random.WeightedItems{},
+		adjectives: strings.Split(strings.ToLower(adjectives), ","),
+		nouns:      strings.Split(strings.ToLower(nouns), ","),
 	}
 
 	for _, opt := range opts {
@@ -72,6 +77,8 @@ func New(db *sql.DB, opts ...Option) *Runner {
 		"ref":      r.store.reference,
 		"row":      r.store.row,
 		"each":     r.store.each,
+		"adj":      func() string { return r.adjectives[random.Int(0, int64(len(r.adjectives)-1))] },
+		"noun":     func() string { return r.nouns[random.Int(0, int64(len(r.nouns)-1))] },
 		"title":    func() string { return randomdata.Title(randomdata.RandomGender) },
 		"namef":    func() string { return randomdata.FirstName(randomdata.RandomGender) },
 		"namel":    randomdata.LastName,

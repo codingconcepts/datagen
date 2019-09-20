@@ -13,3 +13,6 @@
 
 # Output of Makefile builds.
 datagen_*
+
+# Output of runtime.
+query_err.sql
