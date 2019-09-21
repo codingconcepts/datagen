@@ -534,11 +534,12 @@ insert into `pet` (`pid`, `name`) values
 
 ## Todos
 
+* Refactor:
+	* `runner.ResetEach` and remove that state. Create block runner and keep state within there. (Will require a change to the store as well).
+
 * Allow generated columns to be referenced by rows in the same insert.
 
 * Consider using ($1, $2) with arguments
-
-* Refactor `runner.ResetEach` and remove that state.
 
 * Better handling of connection issues during run.
 
