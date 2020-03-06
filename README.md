@@ -310,8 +310,8 @@ References a random row from a previous block's returned values and caches it so
 Works in a simliar way to `row` but references _sequential_ rows from a previous block's returned values, allowing all of a previous block's rows to have associated rows in a related table, provided the product of `--REPEAT` and `ntimes` is the same as the previous block's.
 
 ```
-'{{each "owner" "id" $i "pet"}}',
-'{{each "owner" "name" $i "pet"}}',
+'{{each "owner" "id" $i}}',
+'{{each "owner" "name" $i}}',
 ```
 
 `each` the name of the function.<br/>
