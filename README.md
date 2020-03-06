@@ -92,7 +92,7 @@ Expresses the number of multi-row DML statements that will be generated:
 
 The following script generates 5 entries into the `one` table and between 5 and 10 entries into the `two` table as a result of the combination of the `-- REPEAT` and `ntimes` configured:
 
-```
+``` sql
 -- REPEAT 1
 -- NAME one
 insert into "one" (
