@@ -19,16 +19,12 @@ var (
 )
 
 // String returns a random string between two lengths.
-func String(min, max int64, prefix string, set string) string {
-	if int64(len(prefix)) >= max {
-		return prefix
-	}
-
+func String(min, max int64, set string) string {
 	var length int64
 	if min == max {
 		length = min
 	} else {
-		length = between64(min, max) - int64(len(prefix))
+		length = between64(min, max)
 	}
 
 	runes := ascii
@@ -37,11 +33,11 @@ func String(min, max int64, prefix string, set string) string {
 	}
 
 	output := []rune{}
-	for i := 0; i < int(length-int64(len(prefix))); i++ {
+	for i := 0; i < int(length); i++ {
 		output = append(output, runes[rand.Intn(len(runes))])
 	}
 
-	return prefix + string(output)
+	return string(output)
 }
 
 // StringF returns a random string built around a format string.
@@ -70,7 +66,7 @@ func StringF(d StringFDefaults) func(format string, args ...interface{}) (string
 				if err != nil {
 					return "", errors.Wrap(err, "generating string placeholder")
 				}
-				fargs = append(fargs, String(min, max, "", pattern))
+				fargs = append(fargs, String(min, max, pattern))
 			}
 		}
 

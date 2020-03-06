@@ -3,7 +3,6 @@ package random
 import (
 	"fmt"
 	"strconv"
-	"strings"
 	"testing"
 	"time"
 
@@ -12,27 +11,21 @@ import (
 
 func TestString(t *testing.T) {
 	cases := []struct {
-		name   string
-		min    int64
-		max    int64
-		prefix string
-		set    string
+		name string
+		min  int64
+		max  int64
+		set  string
 	}{
-		{name: "length 1 without prefix", min: 1, max: 1, prefix: ""},
-		{name: "length 1 with prefix", min: 1, max: 1, prefix: "a"},
-		{name: "length 2 without prefix", min: 2, max: 2, prefix: ""},
-		{name: "length 2 with prefix", min: 2, max: 2, prefix: "aa"},
-		{name: "different lengths 2 without prefix", min: 1, max: 10, prefix: ""},
-		{name: "different lengths 2 with prefix", min: 1, max: 10, prefix: "a"},
-		{name: "min > max without prefix", min: 10, max: 1, prefix: ""},
-		{name: "min > max with prefix", min: 10, max: 1, prefix: "a"},
-		{name: "custom set without prefix", min: 10, max: 10, prefix: "", set: "ab"},
-		{name: "custom set with prefix", min: 10, max: 10, prefix: "c", set: "ab"},
+		{name: "length 1", min: 1, max: 1},
+		{name: "length 2", min: 2, max: 2},
+		{name: "different lengths", min: 1, max: 10},
+		{name: "min > max", min: 10, max: 1},
+		{name: "custom set", min: 10, max: 10, set: "ab"},
 	}
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			s := String(c.min, c.max, c.prefix, c.set)
+			s := String(c.min, c.max, c.set)
 
 			if c.min > c.max {
 				c.min, c.max = c.max, c.min
@@ -41,12 +34,8 @@ func TestString(t *testing.T) {
 			test.Assert(t, int64(len(s)) >= c.min)
 			test.Assert(t, int64(len(s)) <= c.max)
 
-			if c.prefix != "" {
-				test.Assert(t, strings.HasPrefix(s, c.prefix))
-			}
-
 			if c.set != "" {
-				runesInSet(t, []rune(c.set), []rune(strings.TrimPrefix(s, c.prefix)))
+				runesInSet(t, []rune(c.set), []rune(s))
 			}
 		})
 	}
@@ -54,26 +43,21 @@ func TestString(t *testing.T) {
 
 func BenchmarkString(b *testing.B) {
 	cases := []struct {
-		name   string
-		min    int64
-		max    int64
-		prefix string
-		set    string
+		name string
+		min  int64
+		max  int64
+		set  string
 	}{
-		{name: "1 1 no prefix", min: 1, max: 1, prefix: ""},
-		{name: "1 1 prefix", min: 1, max: 1, prefix: "a"},
-		{name: "10 10 no prefix", min: 10, max: 10, prefix: ""},
-		{name: "10 10 prefix", min: 10, max: 10, prefix: "a"},
-		{name: "1 10 no prefix", min: 1, max: 10, prefix: ""},
-		{name: "1 10 prefix", min: 1, max: 10, prefix: "a"},
-		{name: "1 10 not prefix set", min: 1, max: 10, prefix: "", set: "abcABC"},
-		{name: "1 10 prefix set", min: 1, max: 10, prefix: "a", set: "abcABC"},
+		{name: "1 1", min: 1, max: 1},
+		{name: "10 10", min: 10, max: 10},
+		{name: "1 10", min: 1, max: 10},
+		{name: "1 10 set", min: 1, max: 10, set: "abcABC"},
 	}
 
 	for _, c := range cases {
 		b.Run(c.name, func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
-				String(c.min, c.max, c.prefix, c.set)
+				String(c.min, c.max, c.set)
 			}
 		})
 	}

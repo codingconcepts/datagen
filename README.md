@@ -151,16 +151,15 @@ By increasing the `REPEAT` value to 2, we'll generate a total of 14 (`ntimes` is
 
 ##### string
 
-Generates a random string between a given minimum and maximum length with an optional prefix:
+Generates a random string between a given minimum and maximum length:
 
 ```
-'{{string 5 10 "l-" "abcABC"}}'
+'{{string 5 10 "abcABC"}}'
 ```
 
 `string` the name of the function.<br/>
 `5` the minimum string length including any prefix.<br/>
 `10` the maximum string length including any prefix.<br/>
-`"l-"` the prefix.<br/>
 `"abcABC"` _(optional)_ the set of characters to select from.<br/>
 
 Note that the apostrophes will wrap the string, turning it into a database string.
