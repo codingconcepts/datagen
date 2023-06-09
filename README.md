@@ -1,3 +1,5 @@
+This project is archived, as [dg](https://github.com/codingconcepts/dg) offers better functionality whilst being simpler to use.
+
 # ![datagen logo](assets/cover.png)
 
 [![Build Status](https://travis-ci.org/codingconcepts/datagen.svg?branch=master)](https://travis-ci.org/codingconcepts/datagen) [![Go Report Card](https://goreportcard.com/badge/github.com/codingconcepts/datagen)](https://goreportcard.com/report/github.com/codingconcepts/datagen)
